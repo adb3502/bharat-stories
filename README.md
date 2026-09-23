@@ -1,7 +1,7 @@
 # Mapping Health and Ageing in India: Early Findings from BHARAT
 
-Scrollytelling data stories from the BHARAT Study (Longevity India, IISc Bangalore). Story 1, the diabetes iceberg, is live; the remaining stories will be added as they are finalised.
+Scrollytelling data stories from the BHARAT Study (Longevity India, IISc Bangalore): diabetes, iron, vitamins, village and city, clinical biological age, the structure of the blood panel, sex differences, inflammation, and a pilot plasma proteome (age trajectories, a proteome clock, neutrophils).
 
-The page embeds aggregate estimates only. Early findings, not peer reviewed.
+No participant identifiers are published. Early findings, not peer reviewed.
 
 Author: Amruth D Bhat
