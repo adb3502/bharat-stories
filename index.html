@@ -340,8 +340,8 @@ const onFill = col => { const c = d3.color(col); if (!c) return '#fff'; const l 
 function hbar(F, rows, o) { // rows: {k, v, c, sub}; o: {x domain, fmt, lw}
   const stacked = F.small && !o.noStack; // phones: label sits above its bar so the bar can use the full width
   const lw = stacked ? 0 : (o.lw || (F.small ? 104 : 150)), rh = stacked ? Math.max(o.rh || 38, 50) : (o.rh || 38);
-  const top = stacked ? 18 : 0;
-  const y = d3.scaleBand(rows.map(d => d.k), [top, top + Math.min(F.ih - 20 - top, rows.length * rh)]).padding(stacked ? .42 : .3), x = d3.scaleLinear(o.domain, [lw + (stacked && o.domain[0] < 0 ? 0 : 0), F.iw - (stacked ? 40 : (o.rpad || 56))]);
+  const top = stacked ? 22 : 0;
+  const y = d3.scaleBand(rows.map(d => d.k), [top, top + Math.min(F.ih - 20 - top, rows.length * rh)]).padding(stacked ? .5 : .3), x = d3.scaleLinear(o.domain, [lw + (stacked && o.domain[0] < 0 ? 0 : 0), F.iw - (stacked ? 40 : (o.rpad || 56))]);
   const ticks = o.ticks ? (stacked && o.ticks.length > 3 ? o.ticks.filter((t, i) => i % 2 === 0) : o.ticks) : x.ticks(stacked ? 3 : 4);
   ticks.forEach(t => { F.g.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', top - 4).attr('y2', y.range()[1]).style('stroke', t === 0 ? V('ink') : V('grid'));
     F.g.append('text').attr('x', x(t)).attr('y', y.range()[1] + 16).attr('text-anchor', 'middle').text((o.tfmt || o.fmt)(t)); });
@@ -350,7 +350,7 @@ function hbar(F, rows, o) { // rows: {k, v, c, sub}; o: {x domain, fmt, lw}
   const b = g.append('rect').attr('x', d => x(Math.min(0, d.v))).attr('height', y.bandwidth()).attr('width', d => Math.abs(x(d.v) - x(0))).style('fill', d => d.c);
   if (!RM) b.attr('width', 0).attr('x', x(0)).transition().duration(DUR).attr('x', d => x(Math.min(0, d.v))).attr('width', d => Math.abs(x(d.v) - x(0)));
   if (stacked) {
-    const L = g.append('text').attr('class', 't-ink').attr('x', x(o.domain[0])).attr('y', -6).style('font-size', '13px');
+    const L = g.append('text').attr('class', 't-ink').attr('x', x(o.domain[0])).attr('y', -8).style('font-size', '13px');
     L.append('tspan').attr('class', 't-b').text(d => d.k); L.filter(d => d.sub).append('tspan').style('fill', V('muted')).style('font-weight', 400).text(d => '  ' + d.sub);
   } else {
     g.append('text').attr('class', 't-ink t-b').attr('y', y.bandwidth() / 2).attr('dy', d => d.sub ? '-.35em' : '.35em').style('font-size', F.small ? '12.5px' : '13.5px').text(d => d.k);
@@ -790,9 +790,9 @@ const RMARG = s => s ? 86 : 112;
       if (idx.length > 1) G.append('line').attr('x1', cx).attr('x2', cx).attr('y1', my(idx[0])).attr('y2', my(idx[idx.length - 1])).style('stroke', V('ink')).style('stroke-width', 2);
       USH.forEach((s, j) => G.append('circle').attr('cx', cx).attr('cy', my(j)).attr('r', Math.min(5.5, x.bandwidth() / 2.6)).style('fill', on[j] ? V('ink') : V('context-2')));
       if (d.key === '00000') G.append('text').attr('x', cx).attr('y', bh + 12).attr('text-anchor', 'middle').style('font-size', '10.5px').style('fill', V('accent')).style('font-weight', 700).text('none'); });
-    legend(F, [{ t: 'Women', c: V('women') }, { t: 'Men', c: V('men') }], F.small ? lw : F.iw - 120, F.small ? -16 : 16);
+    legend(F, [{ t: 'Women', c: V('women') }, { t: 'Men', c: V('men') }], F.small ? 0 : F.iw - 120, F.small ? -16 : 16);
     note(F, 0, bh + 8, 'share with each', { size: '10.5px', c: V('faint') });
-    note(F, F.iw, F.small ? 24 : 36, `all other combinations: ${pc0(otherN / U.n)} of people`, { a: 'end', size: '11.5px', c: V('muted') });
+    note(F, F.iw, F.small ? -14 : 36, F.small ? `other combinations: ${pc0(otherN / U.n)}` : `all other combinations: ${pc0(otherN / U.n)} of people`, { a: 'end', size: '11.5px', c: V('muted') });
   }
   S.push({
     id: 'hunger', tab: 'Vitamins', part: 'Disease burden',
@@ -891,7 +891,7 @@ const RMARG = s => s ? 86 : 112;
     tip(c, d => T(`${SEXN[d.sex]}, age ${f0(d.age)}`, [['PhenoAge', f1(d.pheno)], ['Acceleration', sgn(d.accel) + ' years'], ['Anaemic', d.anaemic ? 'yes' : 'no'], ['RDW contribution', sgn(d.c_rdw) + ' years']]));
     fadeIn(c);
     note(F, x(86), y(86) - 12, 'PhenoAge = age', { a: 'end', size: '12px', cls: 't-ink' });
-    if (!hl) { colorKey(F, AC, F.small ? 4 : 10, 4, F.small ? 120 : 160, '15 y younger', '15 y older'); note(F, F.small ? 4 : 10, -8, 'PhenoAge minus age', { size: '11.5px', c: V('faint') }); }
+    if (!hl) { colorKey(F, AC, F.small ? 34 : 10, 4, F.small ? 120 : 160, '15 y younger', '15 y older'); note(F, F.small ? 34 : 10, -8, 'PhenoAge minus age', { size: '11.5px', c: V('faint') }); }
     if (!hl) note(F, F.iw, F.ih - 16, `r = ${f2(SM.r)} · mean ${sgn(SM.mean_pheno - SM.mean_age)} years vs age`, { a: 'end', size: '13px', cls: 't-ink', w: 600 });
     else { note(F, F.iw, F.ih - 36, `Anaemic (n = ${an.n}): ${sgn(an.accel)} years on average`, { a: 'end', size: '13px', w: 700, c: V('accent') });
       note(F, F.iw, F.ih - 16, `Not anaemic (n = ${na.n}): ${sgn(na.accel)} years`, { a: 'end', size: '13px', w: 600, c: V('muted') }); }
@@ -1382,16 +1382,19 @@ const RMARG = s => s ? 86 : 112;
       } else if (i === 3) {
         const O = P.ora, ks = pats.filter(k => O.some(d => d.cluster === k));
         const rows = ks.flatMap(k => O.filter(d => d.cluster === k).slice(0, 3).map(d => ({ ...d, k, cnt: +String(d.ratio).split('/')[0] })));
-        const F = frame(el, { tall: true, m: { t: 16, l: 0, r: 12, b: 20 }, h: (W, s) => rows.length * 26 + ks.length * 26 + 40 });
-        const pad = 90, x = d3.scaleLog([Math.min(1e-4, d3.min(rows, d => d.padj)), .1], [F.iw - 48, F.iw - 48 - pad - (F.small ? 30 : 110)]).clamp(true);
+        const RHo = (el.clientWidth || 640) < 560 ? 38 : 26;
+        const F = frame(el, { tall: true, m: { t: 16, l: 0, r: 12, b: 20 }, h: (W, s) => rows.length * (s ? 38 : 26) + ks.length * 26 + 40 });
+        const pad = 90, x = d3.scaleLog([Math.min(1e-4, d3.min(rows, d => d.padj)), .1], F.small ? [F.iw - 40, 24] : [F.iw - 48, F.iw - 48 - pad - 110]).clamp(true);
         const rS = d3.scaleSqrt([0, d3.max(rows, d => d.cnt)], [2, 10]); let yy = 0;
         ks.forEach(k => { F.g.append('text').attr('x', 0).attr('y', yy + 12).style('font-size', '12.5px').style('font-weight', 700).style('fill', PC(k)).text(pname(k)); yy += 24;
           rows.filter(d => d.k === k).forEach(d => { const G = F.g.append('g').attr('transform', `translate(0,${yy})`);
-            G.append('text').attr('x', 12).attr('y', 4).attr('dy', '.35em').attr('class', 't-ink').style('font-size', F.small ? '11.5px' : '12.5px').text(cut(d.term.charAt(0).toUpperCase() + d.term.slice(1), F.small ? 30 : 60));
-            G.append('circle').attr('cx', x(d.padj)).attr('cy', 4).attr('r', rS(d.cnt)).style('fill', PC(k)).style('opacity', .85);
-            G.append('text').attr('x', F.iw).attr('y', 4).attr('dy', '.35em').attr('text-anchor', 'end').style('font-size', '11px').text(d.cnt);
-            tip(G, () => T(d.term, [['Source', d.db], ['Proteins', d.ratio], ['Adjusted p', d3.format('.2g')(d.padj)], ['Members', cut(String(d.genes).replace(/\//g, ', '), 120)]])); yy += 26; }); });
-        note(F, x(.1), -4, 'weaker', { a: 'middle', size: '11px', c: V('faint') }); note(F, F.iw, -4, 'proteins', { a: 'end', size: '11px', c: V('faint') }); note(F, F.iw - 40, -4, 'stronger', { a: 'end', size: '11px', c: V('faint') });
+            const cy = F.small ? 16 : 4;
+            if (F.small) G.append('line').attr('x1', 24).attr('x2', F.iw - 40).attr('y1', cy).attr('y2', cy).style('stroke', V('grid'));
+            G.append('text').attr('x', 12).attr('y', F.small ? 0 : 4).attr('dy', '.35em').attr('class', 't-ink').style('font-size', F.small ? '12px' : '12.5px').text(cut(d.term.charAt(0).toUpperCase() + d.term.slice(1), F.small ? 48 : 60));
+            G.append('circle').attr('cx', x(d.padj)).attr('cy', cy).attr('r', rS(d.cnt)).style('fill', PC(k)).style('opacity', .85);
+            G.append('text').attr('x', F.iw).attr('y', cy).attr('dy', '.35em').attr('text-anchor', 'end').style('font-size', '11px').text(d.cnt);
+            tip(G, () => T(d.term, [['Source', d.db], ['Proteins', d.ratio], ['Adjusted p', d3.format('.2g')(d.padj)], ['Members', cut(String(d.genes).replace(/\//g, ', '), 120)]])); yy += RHo; }); });
+        if (F.small) { note(F, 24, -4, 'weaker', { size: '11px', c: V('faint') }); note(F, F.iw - 40, -4, 'stronger enrichment →', { a: 'end', size: '11px', c: V('faint') }); } else { note(F, x(.1), -4, 'weaker', { a: 'middle', size: '11px', c: V('faint') }); note(F, F.iw - 40, -4, 'stronger', { a: 'end', size: '11px', c: V('faint') }); } note(F, F.iw, -4, 'n', { a: 'end', size: '11px', c: V('faint') });
       } else if (i === 4) {
         const dd = L => { const out = []; L.forEach(d => { const g = new Set(d.leadingEdge.split(', ')); if (out.every(o => { const h = o.leadingEdge.split(', '); return h.filter(x => g.has(x)).length / Math.min(h.length, g.size) < .5; })) out.push(d); }); return out; };
         const rows = dd(gsU).slice(0, 8).concat(dd(gsD).slice(0, 8)).map(d => ({ k: cut(nice(d.pathway), 46), est: d.NES, lo: d.NES, hi: d.NES, c: d.NES > 0 ? V('accent') : V('blue'), d })).sort((a, b) => b.est - a.est);
@@ -1408,16 +1411,23 @@ const RMARG = s => s ? 86 : 112;
       } else {
         const N = P.net.nodes, E = P.net.edges, byId = new Map(N.map(d => [d.protein, d]));
         const F = frame(el, { m: { t: 10, l: 6, r: 6, b: 10 }, h: (W, s) => s ? 420 : Math.min(540, Math.max(420, innerHeight * .64)) });
-        const qx = N.map(d => d.x).sort(d3.ascending), qy = N.map(d => d.y).sort(d3.ascending);
-        const x = d3.scaleLinear([d3.quantile(qx, .02), d3.quantile(qx, .98)], [20, F.iw - 20]).clamp(true), y = d3.scaleLinear([d3.quantile(qy, .02), d3.quantile(qy, .98)], [F.ih - 16, 16]).clamp(true);
+        if (!N[0].fx) { const comms = [...new Set(N.map(n => n.comm))].map(c => [c, N.filter(n => n.comm === c).length]).sort((a, b) => b[1] - a[1]).map(c => c[0]), cc = {};
+          comms.forEach((c, i) => { const a = -Math.PI / 2 + i * 2 * Math.PI / comms.length; cc[c] = [Math.cos(a) * .36, Math.sin(a) * .36]; });
+          const nodes = N.map((n, i) => ({ i, comm: n.comm, x: cc[n.comm][0] + (Math.sin(i * 12.9898) * .03), y: cc[n.comm][1] + (Math.cos(i * 78.233) * .03) }));
+          const ix = new Map(N.map((n, i) => [n.protein, i])), links = E.filter(e => ix.has(e.from) && ix.has(e.to)).map(e => ({ source: ix.get(e.from), target: ix.get(e.to) }));
+          const sim = d3.forceSimulation(nodes).force('link', d3.forceLink(links).distance(.03).strength(l => l.source.comm === l.target.comm ? .25 : .01)).force('charge', d3.forceManyBody().strength(-.0009).distanceMax(.2))
+            .force('x', d3.forceX(d => cc[d.comm][0]).strength(.18)).force('y', d3.forceY(d => cc[d.comm][1]).strength(.18)).force('col', d3.forceCollide(.011)).stop();
+          for (let t = 0; t < 400; t++) sim.tick(); nodes.forEach(o => { N[o.i].fx = o.x; N[o.i].fy = o.y; }); }
+        const x = d3.scaleLinear(d3.extent(N, d => d.fx), [16, F.iw - 16]), y = d3.scaleLinear(d3.extent(N, d => d.fy), [30, F.ih - 12]);
+        N.forEach(n => { n.x0 = n.x; n.y0 = n.y; });
         const rs = d3.scaleSqrt([1, d3.max(N, d => d.deg)], [2.5, F.small ? 8 : 11]);
-        F.g.append('g').selectAll('line').data(E.filter(e => byId.has(e.from) && byId.has(e.to))).join('line').attr('x1', e => x(byId.get(e.from).x)).attr('y1', e => y(byId.get(e.from).y)).attr('x2', e => x(byId.get(e.to).x)).attr('y2', e => y(byId.get(e.to).y))
-          .style('stroke', V('context')).style('stroke-width', .6).style('opacity', .6);
-        const nd = F.g.append('g').selectAll('circle').data(N).join('circle').attr('cx', d => x(d.x)).attr('cy', d => y(d.y)).attr('r', d => rs(d.deg)).style('fill', d => d.t > 0 ? V('accent') : V('blue')).style('stroke', V('bg')).style('stroke-width', .8);
+        F.g.append('g').selectAll('line').data(E.filter(e => byId.has(e.from) && byId.has(e.to))).join('line').attr('x1', e => x(byId.get(e.from).fx)).attr('y1', e => y(byId.get(e.from).fy)).attr('x2', e => x(byId.get(e.to).fx)).attr('y2', e => y(byId.get(e.to).fy))
+          .style('stroke', V('context')).style('stroke-width', .5).style('opacity', .45);
+        const nd = F.g.append('g').selectAll('circle').data(N).join('circle').attr('cx', d => x(d.fx)).attr('cy', d => y(d.fy)).attr('r', d => rs(d.deg)).style('fill', d => d.t > 0 ? V('accent') : V('blue')).style('stroke', V('bg')).style('stroke-width', .8);
         tip(nd, d => T(d.protein, [['Connections', d.deg], ['Per decade (log2)', sgn(d.per_decade, f2)]])); fadeIn(nd);
-        N.forEach(n => obstacle(F, x(n.x) - rs(n.deg), y(n.y) - rs(n.deg), 2 * rs(n.deg), 2 * rs(n.deg)));
+        N.forEach(n => obstacle(F, x(n.fx) - rs(n.deg), y(n.fy) - rs(n.deg), 2 * rs(n.deg), 2 * rs(n.deg)));
         const hubs = N.slice().sort((a, b) => b.deg - a.deg).slice(0, F.small ? 10 : 18);
-        place(F, hubs.map(n => ({ x: x(n.x), y: y(n.y), text: n.protein, r: rs(n.deg) + 2, size: '11.5px', w: 700, cls: 't-ink', priority: n.deg })));
+        place(F, hubs.map(n => ({ x: x(n.fx), y: y(n.fy), text: n.protein, r: rs(n.deg) + 2, size: '11.5px', w: 700, cls: 't-ink', priority: n.deg })));
         legend(F, [{ t: 'Higher in older adults', c: V('accent'), dot: 1 }, { t: 'Lower', c: V('blue'), dot: 1 }], 0, 4);
       }
     },
@@ -1471,7 +1481,7 @@ const RMARG = s => s ? 86 : 112;
       } else {
         const rows = SEL.slice(0, 20).map(d => ({ k: d.protein, v: sf(d), c: cf(d) >= 0 ? V('accent') : V('blue'), sub: AGm.get(d.protein) ? `${sgn(AGm.get(d.protein).per_decade, f2)} per decade` : '' }));
         const F = frame(el, { tall: true, m: { t: 10, l: 0 }, h: (W, s) => rows.length * 30 + 50 });
-        hbar(F, rows.map(r => ({ ...r, sub: null })), { domain: [0, 1], ticks: [0, .25, .5, .75, 1], fmt: v => pc0(v), tfmt: v => pc0(v), rh: 30, lw: F.small ? 90 : 110, rpad: 46,
+        hbar(F, rows.map(r => ({ ...r, sub: null })), { noStack: true, domain: [0, 1], ticks: [0, .25, .5, .75, 1], fmt: v => pc0(v), tfmt: v => pc0(v), rh: 30, lw: F.small ? 90 : 110, rpad: 46,
           tip: d => T(d.k, [['Selected in', pc0(d.v) + ' of fits'], ['Age trend', rows.find(r => r.k === d.k).sub || 'n/a']]) });
       }
     },
