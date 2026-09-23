@@ -1884,10 +1884,14 @@ const ORDER=['diabetes','iron','hunger','urbanrural','hba1c','phenoage','panel',
     const nb = sec.querySelector('.nextbtn'); if (nb) nb.onclick = () => show(k + 1, true);
     const drawCard = card => { const j = +card.dataset.i, el = card.querySelector('.chart');
       try { s.draw(el, j); const sv = el.querySelector('svg'); if (sv) sv.setAttribute('aria-label', s.steps[j].t + '. ' + s.steps[j].s); } catch (e) { console.error(s.id, j, e); }
-      st.drawnCards.add(card); };
+      el.style.minHeight = ''; st.drawnCards.add(card); };
     st.drawCard = drawCard;
-    st.io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && !st.drawnCards.has(e.target) && !sec.hidden) drawCard(e.target); }), { rootMargin: '0px 0px -25% 0px' });
-    sec.querySelectorAll('.mcard').forEach(c => st.io.observe(c));
+    // watch the chart itself: draw (and so animate) when at least 40% of it is on screen; replay after it has fully left
+    const away = new Set();
+    st.io = new IntersectionObserver(es => es.forEach(e => { const card = e.target.closest('.mcard'); if (sec.hidden) return;
+      if (e.isIntersecting && e.intersectionRatio >= .4 && (!st.drawnCards.has(card) || away.has(card))) { away.delete(card); drawCard(card); }
+      else if (!e.isIntersecting && st.drawnCards.has(card)) away.add(card); }), { threshold: [0, .4] });
+    sec.querySelectorAll('.mfig').forEach(f => { f.querySelector('.chart').style.minHeight = '240px'; st.io.observe(f); });
   }
   function build(k) {
     if (MQ.matches) return buildMobile(k);
