@@ -1204,14 +1204,14 @@ const RMARG = s => s ? 86 : 112;
         crosshair(F, x, y, [{ name: 'Mean gap', color: V('accent'), fmt: d => f2(d) + ' SD', pts }]);
       } else if (i === 1) {
         const lw = (el.clientWidth || 600) < 560 ? 92 : 124;
-        const F = frame(el, { tall: true, h: (W, s) => Math.max(520, Math.min(760, D.order.length * (s ? 10.5 : 12) + 76)), m: { t: 40, l: lw, r: 8, b: 30 } });
+        const F = frame(el, { tall: true, h: (W, s) => s ? D.order.length * 14 + 76 : Math.max(520, Math.min(760, D.order.length * 12 + 76)), m: { t: 40, l: lw, r: 8, b: 30 } });
         const ages = [...new Set(D.gap.map(d => d.age))].sort(d3.ascending);
         const x = d3.scaleBand(ages, [0, F.iw]), y = d3.scaleBand(D.order, [0, F.ih]);
         const col = d3.scaleLinear([-1.5, 0, 1.5], [css('men'), css('bg'), css('women')]).clamp(true).interpolate(d3.interpolateLab);
         const c = F.g.append('g').selectAll('rect').data(D.gap).join('rect').attr('x', d => x(d.age)).attr('y', d => y(d.name)).attr('width', x.bandwidth() + .5).attr('height', y.bandwidth() + .5).style('fill', d => col(d.gap));
         tip(c, d => T(d.name, [['Age', d.age], ['Gap', `${f2(Math.abs(d.gap))} SD, ${d.gap > 0 ? 'women' : 'men'} higher`]]));
         const fs = Math.min(11.5, y.bandwidth() * .92);
-        F.g.append('g').selectAll('text').data(D.order).join('text').attr('x', -6).attr('y', d => y(d) + y.bandwidth() / 2).attr('dy', '.35em').attr('text-anchor', 'end').style('font-size', Math.max(fs, F.small ? 9 : fs) + 'px').text((d, j) => (F.small && j % 2) ? '' : d);
+        F.g.append('g').selectAll('text').data(D.order).join('text').attr('x', -6).attr('y', d => y(d) + y.bandwidth() / 2).attr('dy', '.35em').attr('text-anchor', 'end').style('font-size', (F.small ? 11 : fs) + 'px').text(d => d);
         F.g.append('g').selectAll('text').data(ages.filter(a => a % 10 === 0)).join('text').attr('x', a => x(a) + x.bandwidth() / 2).attr('y', F.ih + 16).attr('text-anchor', 'middle').text(a => a);
         const kw = Math.min(260, F.iw), gk = F.labels.append('g').attr('transform', `translate(0,-26)`), gid = 'hk' + Math.random().toString(36).slice(2), lg = F.svg.append('defs').append('linearGradient').attr('id', gid);
         d3.range(0, 1.001, .1).forEach(t => lg.append('stop').attr('offset', t).attr('stop-color', col(-1.5 + 3 * t)));
