@@ -1,0 +1,579 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Mapping Health and Ageing in India</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Source+Sans+3:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  color-scheme:light;
+  --bg:#ffffff; --panel:#f6f6f4; --ink:#121212; --text:#3a3a3a; --muted:#666666; --faint:#8c8c8c;
+  --rule:#d9d9d9; --grid:#ebebeb; --context:#c9c9c9; --context-2:#e3e3e3;
+  --accent:#d64000; --accent-soft:#fbe3d6; --blue:#0f5499; --men:#2a78d6; --women:#c8366e;
+  --r0:#e8e8e8; --r1:#f2b089; --r2:#d64000; --r3:#7a2400;
+  --seq0:#dbe8f6; --seq1:#9ec5f4; --seq2:#3987e5; --seq3:#0f5499; --seq4:#0a2f5c;
+  --halo:#ffffff; --tip-bg:#ffffff; --tip-border:#d0d0d0;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --sans:"Source Sans 3","Source Sans Pro",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+
+:root[data-theme="dark"]{
+  color-scheme:dark; --bg:#121314; --panel:#1b1d1f; --ink:#f2f2f2; --text:#d0d0d0; --muted:#a3a3a3; --faint:#8a8a8a;
+  --rule:#34373a; --grid:#25282a; --context:#54585c; --context-2:#34373a;
+  --accent:#e2571c; --accent-soft:#3a2418; --blue:#5b8fd9; --men:#3987e5; --women:#d55181;
+  --r0:#34373a; --r1:#8f4a28; --r2:#e2571c; --r3:#f3a57a;
+  --seq0:#2b5f9e; --seq1:#3f7fd0; --seq2:#6ea6ea; --seq3:#a6c9f3; --seq4:#e0edfc;
+  --halo:#121314; --tip-bg:#1b1d1f; --tip-border:#3a3d40; }
+*{box-sizing:border-box}
+html,body{background:var(--bg)}
+body{margin:0;color:var(--text);font:17px/1.55 var(--sans);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1440px;margin:0 auto;padding-inline:clamp(16px,3.5vw,40px)}
+header.mast{padding-block:40px 18px;border-bottom:1px solid var(--rule)}
+.kicker{font:700 12px/1.2 var(--sans);letter-spacing:.07em;text-transform:uppercase;color:var(--accent)}
+h1{font:600 clamp(32px,4.6vw,50px)/1.06 var(--serif);color:var(--ink);letter-spacing:-.012em;margin:10px 0 12px;text-wrap:balance;max-width:20ch}
+.dek{font:400 clamp(18px,1.6vw,21px)/1.45 var(--sans);color:var(--muted);max-width:62ch;margin:0}
+.byline{font:13px/1.4 var(--sans);color:var(--faint);margin-top:16px}
+nav.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);border-bottom:1px solid var(--rule)}
+.tabrow{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;padding-block:6px}
+.tabrow::-webkit-scrollbar{display:none}
+.tab{flex:0 0 auto;border:0;background:transparent;color:var(--muted);font:600 14px/1.1 var(--sans);padding:9px 12px 10px;border-radius:3px;cursor:pointer;display:flex;gap:7px;align-items:baseline;white-space:nowrap}
+.tab .n{font-variant-numeric:tabular-nums;color:var(--faint);font-weight:500;font-size:12px}
+.tab:hover{color:var(--ink);background:var(--panel)}
+.tab[aria-selected="true"]{color:var(--ink);box-shadow:inset 0 -3px 0 var(--accent)}
+.tab[aria-selected="true"] .n{color:var(--accent)}
+.tab:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+section.story{padding-block:34px 60px}
+.shead{display:grid;gap:10px;max-width:760px;margin-bottom:26px}
+.shead h2{font:600 clamp(28px,3.4vw,40px)/1.1 var(--serif);color:var(--ink);letter-spacing:-.01em;margin:0;text-wrap:balance}
+.shead .dek{font-size:19px}
+.stats{display:flex;flex-wrap:wrap;gap:12px 36px;margin-top:10px}
+.stat{display:grid;gap:2px;max-width:17ch}
+.stat b{font:600 34px/1 var(--sans);color:var(--ink);font-variant-numeric:tabular-nums lining-nums;letter-spacing:-.01em}
+.stat b.acc{color:var(--accent)}
+.stat span{font:14px/1.3 var(--sans);color:var(--muted)}
+.scrolly{display:grid;grid-template-columns:minmax(260px,4fr) minmax(0,9fr);gap:56px;align-items:start}
+.steps{padding-block:calc(var(--vh,1vh)*28) calc(var(--vh,1vh)*40)}
+.step{margin-bottom:calc(var(--vh,1vh)*55);opacity:.28;transition:opacity .35s ease;font:400 19px/1.58 var(--serif);color:var(--text);max-width:34em}
+.step:last-child{margin-bottom:calc(var(--vh,1vh)*12)}
+.step.is-active{opacity:1}
+.step h3{font:700 12px/1.2 var(--sans);letter-spacing:.07em;text-transform:uppercase;color:var(--accent);margin:0 0 8px}
+.step p{margin:0 0 .6em}
+.step strong{color:var(--ink);font-weight:600}
+.figure{position:sticky;top:calc(env(safe-area-inset-top,0px) + 56px);height:calc(var(--vh,1vh)*100 - 64px);display:flex;flex-direction:column;justify-content:safe center;padding-block:8px}
+.ctitle{font:700 19px/1.25 var(--sans);color:var(--ink);margin:0 0 3px;text-wrap:balance;min-height:1.25em;transition:opacity .25s}
+.csub{font:15px/1.35 var(--sans);color:var(--muted);margin:0 0 10px;min-height:1.35em;transition:opacity .25s}
+.chart{width:100%;position:relative}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+.source{font:12.5px/1.4 var(--sans);color:var(--faint);margin-top:8px;max-width:70ch}
+svg text{font-family:var(--sans);fill:var(--muted);font-size:13px;font-variant-numeric:tabular-nums}
+svg .t-ink{fill:var(--ink)} svg .t-b{font-weight:600} svg .t-lg{font-size:15px}
+svg .halo{paint-order:stroke;stroke:var(--halo);stroke-width:4px;stroke-linejoin:round}
+svg .grid line{stroke:var(--grid)} svg .base{stroke:var(--ink);stroke-width:1}
+.after{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:26px;margin-top:10px;border-top:1px solid var(--rule);padding-top:22px}
+.after h4{font:700 12px/1.2 var(--sans);letter-spacing:.07em;text-transform:uppercase;color:var(--ink);margin:0 0 8px}
+.after p,.after li{font:15.5px/1.55 var(--sans);color:var(--text);margin:0 0 .5em}
+.after ul{padding-left:1.1em;margin:0}
+.after code{font:13px ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--panel);padding:1px 4px;border-radius:2px}
+.tip{position:fixed;z-index:50;pointer-events:none;background:var(--tip-bg);border:1px solid var(--tip-border);border-radius:3px;padding:7px 10px;font:13px/1.45 var(--sans);color:var(--ink);box-shadow:0 4px 16px rgba(0,0,0,.12);max-width:260px;font-variant-numeric:tabular-nums}
+.tip .m{color:var(--muted)}
+footer.foot{border-top:1px solid var(--rule);padding-block:22px 40px;font:13px/1.5 var(--sans);color:var(--faint)}
+@media (max-width:900px){
+  .scrolly{display:flex;flex-direction:column}
+  .figure{order:-1;position:sticky;top:calc(env(safe-area-inset-top,0px) + 44px);height:auto;display:block;background:var(--bg);z-index:10;padding:6px 0 8px;border-bottom:1px solid var(--rule);box-shadow:0 6px 10px -8px rgba(0,0,0,.18)}
+  .chart svg{max-height:calc(var(--vh,1vh)*50);width:100%}
+  .figure .source{display:none}
+  .steps{position:relative;z-index:1;padding-block:14px calc(var(--vh,1vh)*45)}
+  .step{background:none;border:0;box-shadow:none;padding:0;margin:0 0 calc(var(--vh,1vh)*42);opacity:.35;font-size:17px}
+  .step.is-active{opacity:1}
+  .ctitle{font-size:15.5px}.csub{font-size:12.5px;margin-bottom:4px}
+}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+.chart svg text.lbl{font-size:13px}
+.next{margin-top:34px}.nextbtn{font:600 16px var(--sans);color:var(--accent);background:none;border:1px solid var(--rule);border-radius:3px;padding:10px 16px;cursor:pointer}.nextbtn:hover{border-color:var(--accent)}
+svg .halo2{paint-order:stroke;stroke:var(--halo);stroke-width:6px;stroke-linejoin:round}
+.part{font:700 11px/1.2 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--faint);padding:0 6px 0 10px;align-self:center;white-space:nowrap}
+
+</style>
+
+<header class="mast"><div class="wrap">
+  <h1>Mapping Health and Ageing in India: Early Findings from BHARAT</h1>
+  <p class="dek">What initial data from the BHARAT Study reveal about diabetes, iron, vitamins, inflammation and ageing, drawing on blood tests, clinical and questionnaire data, and a first plasma proteome.</p>
+  <div class="byline">Amruth D Bhat · Longevity India, IISc Bangalore · September 2026</div>
+</div></header>
+<nav class="tabs" aria-label="Stories"><div class="wrap"><div class="tabrow" id="tabrow" role="tablist"></div></div></nav>
+<main class="wrap" id="main"></main>
+<footer class="foot"><div class="wrap">Data: BHARAT Study (Longevity India, IISc Bangalore), baseline visit. Figures are aggregate estimates; no individual-level data are published. Analyses in R 4.5 (mgcv GAMMs with laboratory and site random intercepts). Thresholds: American Diabetes Association. Early findings, not peer reviewed.</div></footer>
+<div class="tip" id="tip" hidden></div>
+<style>
+.ydbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.ydbtn,.ydskip{font:600 14px var(--sans);border-radius:3px;padding:8px 14px;cursor:pointer}
+.ydbtn{color:#fff;background:var(--accent);border:1px solid var(--accent)}
+.ydbtn:disabled{background:var(--panel);color:var(--muted);border-color:var(--rule);cursor:default}
+.ydskip{color:var(--muted);background:none;border:1px solid var(--rule)}
+.ydbtn:focus-visible,.ydskip:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+<style>.tab.soon{opacity:.45;cursor:default}.tab.soon:hover{background:transparent;color:var(--muted)}.tab.soon .soonlab{font:600 10px/1 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--faint);margin-left:6px}</style>
+<script id="data" type="application/json">{"d1":{"overall":[{"n":1423,"diabetes":0.28039,"diagnosed":0.13633,"undiagnosed":0.14406,"prediabetes":0.30569}],"bands":[{"band":"18-29","cat":"Normoglycaemic","share":0.77224,"n":217},{"band":"18-29","cat":"Prediabetes","share":0.19573,"n":55},{"band":"18-29","cat":"Undiagnosed","share":0.02491,"n":7},{"band":"18-29","cat":"Diagnosed","share":0.00712,"n":2},{"band":"30-39","cat":"Normoglycaemic","share":0.5583,"n":158},{"band":"30-39","cat":"Prediabetes","share":0.31449,"n":89},{"band":"30-39","cat":"Undiagnosed","share":0.09187,"n":26},{"band":"30-39","cat":"Diagnosed","share":0.03534,"n":10},{"band":"40-49","cat":"Normoglycaemic","share":0.36334,"n":113},{"band":"40-49","cat":"Prediabetes","share":0.3537,"n":110},{"band":"40-49","cat":"Undiagnosed","share":0.17042,"n":53},{"band":"40-49","cat":"Diagnosed","share":0.11254,"n":35},{"band":"50-59","cat":"Normoglycaemic","share":0.20543,"n":53},{"band":"50-59","cat":"Prediabetes","share":0.33333,"n":86},{"band":"50-59","cat":"Undiagnosed","share":0.24806,"n":64},{"band":"50-59","cat":"Diagnosed","share":0.21318,"n":55},{"band":"60-69","cat":"Normoglycaemic","share":0.16568,"n":28},{"band":"60-69","cat":"Prediabetes","share":0.28994,"n":49},{"band":"60-69","cat":"Undiagnosed","share":0.23077,"n":39},{"band":"60-69","cat":"Diagnosed","share":0.31361,"n":53},{"band":"70+","cat":"Normoglycaemic","share":0.16529,"n":20},{"band":"70+","cat":"Prediabetes","share":0.38017,"n":46},{"band":"70+","cat":"Undiagnosed","share":0.13223,"n":16},{"band":"70+","cat":"Diagnosed","share":0.32231,"n":39}],"awareness":[{"band":"18-29","n":9,"aware":0.22222,"lo":0.02814,"hi":0.60009},{"band":"30-39","n":36,"aware":0.27778,"lo":0.142,"hi":0.45186},{"band":"40-49","n":88,"aware":0.39773,"lo":0.29488,"hi":0.50766},{"band":"50-59","n":119,"aware":0.46218,"lo":0.37037,"hi":0.55592},{"band":"60-69","n":92,"aware":0.57609,"lo":0.46862,"hi":0.67851},{"band":"70+","n":55,"aware":0.70909,"lo":0.57102,"hi":0.8237}],"awareness_sex":[{"sex":"M","n":201,"aware":50.2},{"sex":"F","n":198,"aware":47}],"control":[{"band":"<50","n":47,"HbA1c < 7%":23.4,"HbA1c < 8%":46.8,"median HbA1c":8.1},{"band":"50-59","n":55,"HbA1c < 7%":21.8,"HbA1c < 8%":49.1,"median HbA1c":8},{"band":"60+","n":92,"HbA1c < 7%":32.6,"HbA1c < 8%":48.9,"median HbA1c":8.1}],"control_all":[{"n":194,"c7":0.2732,"med":8.1}],"cascade":[{"stage":"Has diabetes (HbA1c or diagnosis)","n":399,"share":1},{"stage":"Knows it","n":194,"share":0.48622},{"stage":"At target (HbA1c < 7%)","n":53,"share":0.13283}],"kidney":[{"age":20,"dmg":"Normoglycaemic","fit":0.7654,"analyte":"creatinine","p_interaction":0.03631},{"age":21,"dmg":"Normoglycaemic","fit":0.76881,"analyte":"creatinine","p_interaction":0.03631},{"age":22,"dmg":"Normoglycaemic","fit":0.77219,"analyte":"creatinine","p_interaction":0.03631},{"age":23,"dmg":"Normoglycaemic","fit":0.77554,"analyte":"creatinine","p_interaction":0.03631},{"age":24,"dmg":"Normoglycaemic","fit":0.77882,"analyte":"creatinine","p_interaction":0.03631},{"age":25,"dmg":"Normoglycaemic","fit":0.78203,"analyte":"creatinine","p_interaction":0.03631},{"age":25,"dmg":"Diabetes","fit":0.72708,"analyte":"creatinine","p_interaction":0.03631},{"age":26,"dmg":"Normoglycaemic","fit":0.78514,"analyte":"creatinine","p_interaction":0.03631},{"age":26,"dmg":"Diabetes","fit":0.73099,"analyte":"creatinine","p_interaction":0.03631},{"age":27,"dmg":"Normoglycaemic","fit":0.78813,"analyte":"creatinine","p_interaction":0.03631},{"age":27,"dmg":"Diabetes","fit":0.7348,"analyte":"creatinine","p_interaction":0.03631},{"age":28,"dmg":"Normoglycaemic","fit":0.79098,"analyte":"creatinine","p_interaction":0.03631},{"age":28,"dmg":"Diabetes","fit":0.73847,"analyte":"creatinine","p_interaction":0.03631},{"age":29,"dmg":"Normoglycaemic","fit":0.79367,"analyte":"creatinine","p_interaction":0.03631},{"age":29,"dmg":"Diabetes","fit":0.74199,"analyte":"creatinine","p_interaction":0.03631},{"age":30,"dmg":"Normoglycaemic","fit":0.79619,"analyte":"creatinine","p_interaction":0.03631},{"age":30,"dmg":"Diabetes","fit":0.74535,"analyte":"creatinine","p_interaction":0.03631},{"age":31,"dmg":"Normoglycaemic","fit":0.7985,"analyte":"creatinine","p_interaction":0.03631},{"age":31,"dmg":"Diabetes","fit":0.74853,"analyte":"creatinine","p_interaction":0.03631},{"age":32,"dmg":"Normoglycaemic","fit":0.8006,"analyte":"creatinine","p_interaction":0.03631},{"age":32,"dmg":"Diabetes","fit":0.75151,"analyte":"creatinine","p_interaction":0.03631},{"age":33,"dmg":"Normoglycaemic","fit":0.80247,"analyte":"creatinine","p_interaction":0.03631},{"age":33,"dmg":"Diabetes","fit":0.75427,"analyte":"creatinine","p_interaction":0.03631},{"age":34,"dmg":"Normoglycaemic","fit":0.8041,"analyte":"creatinine","p_interaction":0.03631},{"age":34,"dmg":"Diabetes","fit":0.75682,"analyte":"creatinine","p_interaction":0.03631},{"age":35,"dmg":"Normoglycaemic","fit":0.80549,"analyte":"creatinine","p_interaction":0.03631},{"age":35,"dmg":"Diabetes","fit":0.75914,"analyte":"creatinine","p_interaction":0.03631},{"age":36,"dmg":"Normoglycaemic","fit":0.80662,"analyte":"creatinine","p_interaction":0.03631},{"age":36,"dmg":"Diabetes","fit":0.76123,"analyte":"creatinine","p_interaction":0.03631},{"age":37,"dmg":"Normoglycaemic","fit":0.80749,"analyte":"creatinine","p_interaction":0.03631},{"age":37,"dmg":"Diabetes","fit":0.76309,"analyte":"creatinine","p_interaction":0.03631},{"age":38,"dmg":"Normoglycaemic","fit":0.80811,"analyte":"creatinine","p_interaction":0.03631},{"age":38,"dmg":"Diabetes","fit":0.76471,"analyte":"creatinine","p_interaction":0.03631},{"age":39,"dmg":"Normoglycaemic","fit":0.80848,"analyte":"creatinine","p_interaction":0.03631},{"age":39,"dmg":"Diabetes","fit":0.76612,"analyte":"creatinine","p_interaction":0.03631},{"age":40,"dmg":"Normoglycaemic","fit":0.80861,"analyte":"creatinine","p_interaction":0.03631},{"age":40,"dmg":"Diabetes","fit":0.76731,"analyte":"creatinine","p_interaction":0.03631},{"age":41,"dmg":"Normoglycaemic","fit":0.8085,"analyte":"creatinine","p_interaction":0.03631},{"age":41,"dmg":"Diabetes","fit":0.76831,"analyte":"creatinine","p_interaction":0.03631},{"age":42,"dmg":"Normoglycaemic","fit":0.80819,"analyte":"creatinine","p_interaction":0.03631},{"age":42,"dmg":"Diabetes","fit":0.76912,"analyte":"creatinine","p_interaction":0.03631},{"age":43,"dmg":"Normoglycaemic","fit":0.80768,"analyte":"creatinine","p_interaction":0.03631},{"age":43,"dmg":"Diabetes","fit":0.76978,"analyte":"creatinine","p_interaction":0.03631},{"age":44,"dmg":"Normoglycaemic","fit":0.80699,"analyte":"creatinine","p_interaction":0.03631},{"age":44,"dmg":"Diabetes","fit":0.77029,"analyte":"creatinine","p_interaction":0.03631},{"age":45,"dmg":"Normoglycaemic","fit":0.80616,"analyte":"creatinine","p_interaction":0.03631},{"age":45,"dmg":"Diabetes","fit":0.77071,"analyte":"creatinine","p_interaction":0.03631},{"age":46,"dmg":"Normoglycaemic","fit":0.80522,"analyte":"creatinine","p_interaction":0.03631},{"age":46,"dmg":"Diabetes","fit":0.77104,"analyte":"creatinine","p_interaction":0.03631},{"age":47,"dmg":"Normoglycaemic","fit":0.80419,"analyte":"creatinine","p_interaction":0.03631},{"age":47,"dmg":"Diabetes","fit":0.77134,"analyte":"creatinine","p_interaction":0.03631},{"age":48,"dmg":"Normoglycaemic","fit":0.80311,"analyte":"creatinine","p_interaction":0.03631},{"age":48,"dmg":"Diabetes","fit":0.77162,"analyte":"creatinine","p_interaction":0.03631},{"age":49,"dmg":"Normoglycaemic","fit":0.80201,"analyte":"creatinine","p_interaction":0.03631},{"age":49,"dmg":"Diabetes","fit":0.77194,"analyte":"creatinine","p_interaction":0.03631},{"age":50,"dmg":"Normoglycaemic","fit":0.80094,"analyte":"creatinine","p_interaction":0.03631},{"age":50,"dmg":"Diabetes","fit":0.77234,"analyte":"creatinine","p_interaction":0.03631},{"age":51,"dmg":"Normoglycaemic","fit":0.79994,"analyte":"creatinine","p_interaction":0.03631},{"age":51,"dmg":"Diabetes","fit":0.77284,"analyte":"creatinine","p_interaction":0.03631},{"age":52,"dmg":"Normoglycaemic","fit":0.79903,"analyte":"creatinine","p_interaction":0.03631},{"age":52,"dmg":"Diabetes","fit":0.77351,"analyte":"creatinine","p_interaction":0.03631},{"age":53,"dmg":"Normoglycaemic","fit":0.79828,"analyte":"creatinine","p_interaction":0.03631},{"age":53,"dmg":"Diabetes","fit":0.77437,"analyte":"creatinine","p_interaction":0.03631},{"age":54,"dmg":"Normoglycaemic","fit":0.7977,"analyte":"creatinine","p_interaction":0.03631},{"age":54,"dmg":"Diabetes","fit":0.77547,"analyte":"creatinine","p_interaction":0.03631},{"age":55,"dmg":"Normoglycaemic","fit":0.79735,"analyte":"creatinine","p_interaction":0.03631},{"age":55,"dmg":"Diabetes","fit":0.77686,"analyte":"creatinine","p_interaction":0.03631},{"age":56,"dmg":"Normoglycaemic","fit":0.79727,"analyte":"creatinine","p_interaction":0.03631},{"age":56,"dmg":"Diabetes","fit":0.77857,"analyte":"creatinine","p_interaction":0.03631},{"age":57,"dmg":"Normoglycaemic","fit":0.79749,"analyte":"creatinine","p_interaction":0.03631},{"age":57,"dmg":"Diabetes","fit":0.78064,"analyte":"creatinine","p_interaction":0.03631},{"age":58,"dmg":"Normoglycaemic","fit":0.79804,"analyte":"creatinine","p_interaction":0.03631},{"age":58,"dmg":"Diabetes","fit":0.78311,"analyte":"creatinine","p_interaction":0.03631},{"age":59,"dmg":"Normoglycaemic","fit":0.79897,"analyte":"creatinine","p_interaction":0.03631},{"age":59,"dmg":"Diabetes","fit":0.78602,"analyte":"creatinine","p_interaction":0.03631},{"age":60,"dmg":"Normoglycaemic","fit":0.8003,"analyte":"creatinine","p_interaction":0.03631},{"age":60,"dmg":"Diabetes","fit":0.7894,"analyte":"creatinine","p_interaction":0.03631},{"age":61,"dmg":"Normoglycaemic","fit":0.80206,"analyte":"creatinine","p_interaction":0.03631},{"age":61,"dmg":"Diabetes","fit":0.79327,"analyte":"creatinine","p_interaction":0.03631},{"age":62,"dmg":"Normoglycaemic","fit":0.80427,"analyte":"creatinine","p_interaction":0.03631},{"age":62,"dmg":"Diabetes","fit":0.79765,"analyte":"creatinine","p_interaction":0.03631},{"age":63,"dmg":"Normoglycaemic","fit":0.80695,"analyte":"creatinine","p_interaction":0.03631},{"age":63,"dmg":"Diabetes","fit":0.80258,"analyte":"creatinine","p_interaction":0.03631},{"age":64,"dmg":"Normoglycaemic","fit":0.81012,"analyte":"creatinine","p_interaction":0.03631},{"age":64,"dmg":"Diabetes","fit":0.80806,"analyte":"creatinine","p_interaction":0.03631},{"age":65,"dmg":"Normoglycaemic","fit":0.81379,"analyte":"creatinine","p_interaction":0.03631},{"age":65,"dmg":"Diabetes","fit":0.8141,"analyte":"creatinine","p_interaction":0.03631},{"age":66,"dmg":"Normoglycaemic","fit":0.81796,"analyte":"creatinine","p_interaction":0.03631},{"age":66,"dmg":"Diabetes","fit":0.82071,"analyte":"creatinine","p_interaction":0.03631},{"age":67,"dmg":"Normoglycaemic","fit":0.82264,"analyte":"creatinine","p_interaction":0.03631},{"age":67,"dmg":"Diabetes","fit":0.8279,"analyte":"creatinine","p_interaction":0.03631},{"age":68,"dmg":"Normoglycaemic","fit":0.82783,"analyte":"creatinine","p_interaction":0.03631},{"age":68,"dmg":"Diabetes","fit":0.83565,"analyte":"creatinine","p_interaction":0.03631},{"age":69,"dmg":"Normoglycaemic","fit":0.83352,"analyte":"creatinine","p_interaction":0.03631},{"age":69,"dmg":"Diabetes","fit":0.84396,"analyte":"creatinine","p_interaction":0.03631},{"age":70,"dmg":"Normoglycaemic","fit":0.83969,"analyte":"creatinine","p_interaction":0.03631},{"age":70,"dmg":"Diabetes","fit":0.85281,"analyte":"creatinine","p_interaction":0.03631},{"age":71,"dmg":"Normoglycaemic","fit":0.84633,"analyte":"creatinine","p_interaction":0.03631},{"age":71,"dmg":"Diabetes","fit":0.86218,"analyte":"creatinine","p_interaction":0.03631},{"age":72,"dmg":"Normoglycaemic","fit":0.85342,"analyte":"creatinine","p_interaction":0.03631},{"age":72,"dmg":"Diabetes","fit":0.87206,"analyte":"creatinine","p_interaction":0.03631},{"age":73,"dmg":"Normoglycaemic","fit":0.86094,"analyte":"creatinine","p_interaction":0.03631},{"age":73,"dmg":"Diabetes","fit":0.88241,"analyte":"creatinine","p_interaction":0.03631},{"age":74,"dmg":"Normoglycaemic","fit":0.86884,"analyte":"creatinine","p_interaction":0.03631},{"age":74,"dmg":"Diabetes","fit":0.8932,"analyte":"creatinine","p_interaction":0.03631},{"age":75,"dmg":"Normoglycaemic","fit":0.87712,"analyte":"creatinine","p_interaction":0.03631},{"age":75,"dmg":"Diabetes","fit":0.90439,"analyte":"creatinine","p_interaction":0.03631},{"age":76,"dmg":"Normoglycaemic","fit":0.88572,"analyte":"creatinine","p_interaction":0.03631},{"age":76,"dmg":"Diabetes","fit":0.91595,"analyte":"creatinine","p_interaction":0.03631},{"age":77,"dmg":"Normoglycaemic","fit":0.89462,"analyte":"creatinine","p_interaction":0.03631},{"age":77,"dmg":"Diabetes","fit":0.92783,"analyte":"creatinine","p_interaction":0.03631},{"age":78,"dmg":"Normoglycaemic","fit":0.90377,"analyte":"creatinine","p_interaction":0.03631},{"age":78,"dmg":"Diabetes","fit":0.94,"analyte":"creatinine","p_interaction":0.03631},{"age":79,"dmg":"Normoglycaemic","fit":0.91314,"analyte":"creatinine","p_interaction":0.03631},{"age":79,"dmg":"Diabetes","fit":0.95241,"analyte":"creatinine","p_interaction":0.03631},{"age":80,"dmg":"Normoglycaemic","fit":0.92269,"analyte":"creatinine","p_interaction":0.03631},{"age":80,"dmg":"Diabetes","fit":0.96503,"analyte":"creatinine","p_interaction":0.03631},{"age":20,"dmg":"Normoglycaemic","fit":5.16665,"analyte":"uric_acid","p_interaction":0.11366},{"age":21,"dmg":"Normoglycaemic","fit":5.16618,"analyte":"uric_acid","p_interaction":0.11366},{"age":22,"dmg":"Normoglycaemic","fit":5.1657,"analyte":"uric_acid","p_interaction":0.11366},{"age":23,"dmg":"Normoglycaemic","fit":5.16523,"analyte":"uric_acid","p_interaction":0.11366},{"age":24,"dmg":"Normoglycaemic","fit":5.16476,"analyte":"uric_acid","p_interaction":0.11366},{"age":25,"dmg":"Normoglycaemic","fit":5.16429,"analyte":"uric_acid","p_interaction":0.11366},{"age":25,"dmg":"Diabetes","fit":4.56516,"analyte":"uric_acid","p_interaction":0.11366},{"age":26,"dmg":"Normoglycaemic","fit":5.16382,"analyte":"uric_acid","p_interaction":0.11366},{"age":26,"dmg":"Diabetes","fit":4.5727,"analyte":"uric_acid","p_interaction":0.11366},{"age":27,"dmg":"Normoglycaemic","fit":5.16334,"analyte":"uric_acid","p_interaction":0.11366},{"age":27,"dmg":"Diabetes","fit":4.58026,"analyte":"uric_acid","p_interaction":0.11366},{"age":28,"dmg":"Normoglycaemic","fit":5.16287,"analyte":"uric_acid","p_interaction":0.11366},{"age":28,"dmg":"Diabetes","fit":4.58785,"analyte":"uric_acid","p_interaction":0.11366},{"age":29,"dmg":"Normoglycaemic","fit":5.1624,"analyte":"uric_acid","p_interaction":0.11366},{"age":29,"dmg":"Diabetes","fit":4.59546,"analyte":"uric_acid","p_interaction":0.11366},{"age":30,"dmg":"Normoglycaemic","fit":5.16193,"analyte":"uric_acid","p_interaction":0.11366},{"age":30,"dmg":"Diabetes","fit":4.60312,"analyte":"uric_acid","p_interaction":0.11366},{"age":31,"dmg":"Normoglycaemic","fit":5.16146,"analyte":"uric_acid","p_interaction":0.11366},{"age":31,"dmg":"Diabetes","fit":4.61081,"analyte":"uric_acid","p_interaction":0.11366},{"age":32,"dmg":"Normoglycaemic","fit":5.16098,"analyte":"uric_acid","p_interaction":0.11366},{"age":32,"dmg":"Diabetes","fit":4.61854,"analyte":"uric_acid","p_interaction":0.11366},{"age":33,"dmg":"Normoglycaemic","fit":5.16051,"analyte":"uric_acid","p_interaction":0.11366},{"age":33,"dmg":"Diabetes","fit":4.62633,"analyte":"uric_acid","p_interaction":0.11366},{"age":34,"dmg":"Normoglycaemic","fit":5.16004,"analyte":"uric_acid","p_interaction":0.11366},{"age":34,"dmg":"Diabetes","fit":4.63416,"analyte":"uric_acid","p_interaction":0.11366},{"age":35,"dmg":"Normoglycaemic","fit":5.15956,"analyte":"uric_acid","p_interaction":0.11366},{"age":35,"dmg":"Diabetes","fit":4.64205,"analyte":"uric_acid","p_interaction":0.11366},{"age":36,"dmg":"Normoglycaemic","fit":5.15909,"analyte":"uric_acid","p_interaction":0.11366},{"age":36,"dmg":"Diabetes","fit":4.64999,"analyte":"uric_acid","p_interaction":0.11366},{"age":37,"dmg":"Normoglycaemic","fit":5.15862,"analyte":"uric_acid","p_interaction":0.11366},{"age":37,"dmg":"Diabetes","fit":4.658,"analyte":"uric_acid","p_interaction":0.11366},{"age":38,"dmg":"Normoglycaemic","fit":5.15814,"analyte":"uric_acid","p_interaction":0.11366},{"age":38,"dmg":"Diabetes","fit":4.66606,"analyte":"uric_acid","p_interaction":0.11366},{"age":39,"dmg":"Normoglycaemic","fit":5.15767,"analyte":"uric_acid","p_interaction":0.11366},{"age":39,"dmg":"Diabetes","fit":4.6742,"analyte":"uric_acid","p_interaction":0.11366},{"age":40,"dmg":"Normoglycaemic","fit":5.1572,"analyte":"uric_acid","p_interaction":0.11366},{"age":40,"dmg":"Diabetes","fit":4.6824,"analyte":"uric_acid","p_interaction":0.11366},{"age":41,"dmg":"Normoglycaemic","fit":5.15672,"analyte":"uric_acid","p_interaction":0.11366},{"age":41,"dmg":"Diabetes","fit":4.69067,"analyte":"uric_acid","p_interaction":0.11366},{"age":42,"dmg":"Normoglycaemic","fit":5.15625,"analyte":"uric_acid","p_interaction":0.11366},{"age":42,"dmg":"Diabetes","fit":4.69901,"analyte":"uric_acid","p_interaction":0.11366},{"age":43,"dmg":"Normoglycaemic","fit":5.15577,"analyte":"uric_acid","p_interaction":0.11366},{"age":43,"dmg":"Diabetes","fit":4.70742,"analyte":"uric_acid","p_interaction":0.11366},{"age":44,"dmg":"Normoglycaemic","fit":5.1553,"analyte":"uric_acid","p_interaction":0.11366},{"age":44,"dmg":"Diabetes","fit":4.7159,"analyte":"uric_acid","p_interaction":0.11366},{"age":45,"dmg":"Normoglycaemic","fit":5.15482,"analyte":"uric_acid","p_interaction":0.11366},{"age":45,"dmg":"Diabetes","fit":4.72445,"analyte":"uric_acid","p_interaction":0.11366},{"age":46,"dmg":"Normoglycaemic","fit":5.15434,"analyte":"uric_acid","p_interaction":0.11366},{"age":46,"dmg":"Diabetes","fit":4.73307,"analyte":"uric_acid","p_interaction":0.11366},{"age":47,"dmg":"Normoglycaemic","fit":5.15387,"analyte":"uric_acid","p_interaction":0.11366},{"age":47,"dmg":"Diabetes","fit":4.74177,"analyte":"uric_acid","p_interaction":0.11366},{"age":48,"dmg":"Normoglycaemic","fit":5.15339,"analyte":"uric_acid","p_interaction":0.11366},{"age":48,"dmg":"Diabetes","fit":4.75053,"analyte":"uric_acid","p_interaction":0.11366},{"age":49,"dmg":"Normoglycaemic","fit":5.15291,"analyte":"uric_acid","p_interaction":0.11366},{"age":49,"dmg":"Diabetes","fit":4.75936,"analyte":"uric_acid","p_interaction":0.11366},{"age":50,"dmg":"Normoglycaemic","fit":5.15244,"analyte":"uric_acid","p_interaction":0.11366},{"age":50,"dmg":"Diabetes","fit":4.76826,"analyte":"uric_acid","p_interaction":0.11366},{"age":51,"dmg":"Normoglycaemic","fit":5.15196,"analyte":"uric_acid","p_interaction":0.11366},{"age":51,"dmg":"Diabetes","fit":4.77723,"analyte":"uric_acid","p_interaction":0.11366},{"age":52,"dmg":"Normoglycaemic","fit":5.15148,"analyte":"uric_acid","p_interaction":0.11366},{"age":52,"dmg":"Diabetes","fit":4.78625,"analyte":"uric_acid","p_interaction":0.11366},{"age":53,"dmg":"Normoglycaemic","fit":5.151,"analyte":"uric_acid","p_interaction":0.11366},{"age":53,"dmg":"Diabetes","fit":4.79534,"analyte":"uric_acid","p_interaction":0.11366},{"age":54,"dmg":"Normoglycaemic","fit":5.15052,"analyte":"uric_acid","p_interaction":0.11366},{"age":54,"dmg":"Diabetes","fit":4.80448,"analyte":"uric_acid","p_interaction":0.11366},{"age":55,"dmg":"Normoglycaemic","fit":5.15004,"analyte":"uric_acid","p_interaction":0.11366},{"age":55,"dmg":"Diabetes","fit":4.81368,"analyte":"uric_acid","p_interaction":0.11366},{"age":56,"dmg":"Normoglycaemic","fit":5.14956,"analyte":"uric_acid","p_interaction":0.11366},{"age":56,"dmg":"Diabetes","fit":4.82294,"analyte":"uric_acid","p_interaction":0.11366},{"age":57,"dmg":"Normoglycaemic","fit":5.14908,"analyte":"uric_acid","p_interaction":0.11366},{"age":57,"dmg":"Diabetes","fit":4.83224,"analyte":"uric_acid","p_interaction":0.11366},{"age":58,"dmg":"Normoglycaemic","fit":5.1486,"analyte":"uric_acid","p_interaction":0.11366},{"age":58,"dmg":"Diabetes","fit":4.84159,"analyte":"uric_acid","p_interaction":0.11366},{"age":59,"dmg":"Normoglycaemic","fit":5.14812,"analyte":"uric_acid","p_interaction":0.11366},{"age":59,"dmg":"Diabetes","fit":4.85099,"analyte":"uric_acid","p_interaction":0.11366},{"age":60,"dmg":"Normoglycaemic","fit":5.14764,"analyte":"uric_acid","p_interaction":0.11366},{"age":60,"dmg":"Diabetes","fit":4.86043,"analyte":"uric_acid","p_interaction":0.11366},{"age":61,"dmg":"Normoglycaemic","fit":5.14716,"analyte":"uric_acid","p_interaction":0.11366},{"age":61,"dmg":"Diabetes","fit":4.8699,"analyte":"uric_acid","p_interaction":0.11366},{"age":62,"dmg":"Normoglycaemic","fit":5.14668,"analyte":"uric_acid","p_interaction":0.11366},{"age":62,"dmg":"Diabetes","fit":4.87942,"analyte":"uric_acid","p_interaction":0.11366},{"age":63,"dmg":"Normoglycaemic","fit":5.1462,"analyte":"uric_acid","p_interaction":0.11366},{"age":63,"dmg":"Diabetes","fit":4.88896,"analyte":"uric_acid","p_interaction":0.11366},{"age":64,"dmg":"Normoglycaemic","fit":5.14571,"analyte":"uric_acid","p_interaction":0.11366},{"age":64,"dmg":"Diabetes","fit":4.89853,"analyte":"uric_acid","p_interaction":0.11366},{"age":65,"dmg":"Normoglycaemic","fit":5.14523,"analyte":"uric_acid","p_interaction":0.11366},{"age":65,"dmg":"Diabetes","fit":4.90814,"analyte":"uric_acid","p_interaction":0.11366},{"age":66,"dmg":"Normoglycaemic","fit":5.14475,"analyte":"uric_acid","p_interaction":0.11366},{"age":66,"dmg":"Diabetes","fit":4.91776,"analyte":"uric_acid","p_interaction":0.11366},{"age":67,"dmg":"Normoglycaemic","fit":5.14427,"analyte":"uric_acid","p_interaction":0.11366},{"age":67,"dmg":"Diabetes","fit":4.92741,"analyte":"uric_acid","p_interaction":0.11366},{"age":68,"dmg":"Normoglycaemic","fit":5.14379,"analyte":"uric_acid","p_interaction":0.11366},{"age":68,"dmg":"Diabetes","fit":4.93708,"analyte":"uric_acid","p_interaction":0.11366},{"age":69,"dmg":"Normoglycaemic","fit":5.14331,"analyte":"uric_acid","p_interaction":0.11366},{"age":69,"dmg":"Diabetes","fit":4.94676,"analyte":"uric_acid","p_interaction":0.11366},{"age":70,"dmg":"Normoglycaemic","fit":5.14283,"analyte":"uric_acid","p_interaction":0.11366},{"age":70,"dmg":"Diabetes","fit":4.95646,"analyte":"uric_acid","p_interaction":0.11366},{"age":71,"dmg":"Normoglycaemic","fit":5.14235,"analyte":"uric_acid","p_interaction":0.11366},{"age":71,"dmg":"Diabetes","fit":4.96618,"analyte":"uric_acid","p_interaction":0.11366},{"age":72,"dmg":"Normoglycaemic","fit":5.14186,"analyte":"uric_acid","p_interaction":0.11366},{"age":72,"dmg":"Diabetes","fit":4.9759,"analyte":"uric_acid","p_interaction":0.11366},{"age":73,"dmg":"Normoglycaemic","fit":5.14138,"analyte":"uric_acid","p_interaction":0.11366},{"age":73,"dmg":"Diabetes","fit":4.98564,"analyte":"uric_acid","p_interaction":0.11366},{"age":74,"dmg":"Normoglycaemic","fit":5.1409,"analyte":"uric_acid","p_interaction":0.11366},{"age":74,"dmg":"Diabetes","fit":4.99538,"analyte":"uric_acid","p_interaction":0.11366},{"age":75,"dmg":"Normoglycaemic","fit":5.14042,"analyte":"uric_acid","p_interaction":0.11366},{"age":75,"dmg":"Diabetes","fit":5.00513,"analyte":"uric_acid","p_interaction":0.11366},{"age":76,"dmg":"Normoglycaemic","fit":5.13994,"analyte":"uric_acid","p_interaction":0.11366},{"age":76,"dmg":"Diabetes","fit":5.01489,"analyte":"uric_acid","p_interaction":0.11366},{"age":77,"dmg":"Normoglycaemic","fit":5.13946,"analyte":"uric_acid","p_interaction":0.11366},{"age":77,"dmg":"Diabetes","fit":5.02465,"analyte":"uric_acid","p_interaction":0.11366},{"age":78,"dmg":"Normoglycaemic","fit":5.13898,"analyte":"uric_acid","p_interaction":0.11366},{"age":78,"dmg":"Diabetes","fit":5.03442,"analyte":"uric_acid","p_interaction":0.11366},{"age":79,"dmg":"Normoglycaemic","fit":5.1385,"analyte":"uric_acid","p_interaction":0.11366},{"age":79,"dmg":"Diabetes","fit":5.04419,"analyte":"uric_acid","p_interaction":0.11366},{"age":80,"dmg":"Normoglycaemic","fit":5.13802,"analyte":"uric_acid","p_interaction":0.11366},{"age":80,"dmg":"Diabetes","fit":5.05396,"analyte":"uric_acid","p_interaction":0.11366}]}}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<script>
+const DATA = JSON.parse(document.getElementById('data').textContent);
+const TIP = document.getElementById('tip');
+const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const DUR = RM ? 0 : 700;
+const css = k => getComputedStyle(document.documentElement).getPropertyValue('--' + k).trim();
+const V = k => `var(--${k})`;
+const SEXC = { M: V('men'), F: V('women') }, SEXN = { M: 'Men', F: 'Women' };
+const f0 = d3.format('.0f'), f1 = d3.format('.1f'), f2 = d3.format('.2f'), pc0 = d3.format('.0%'), pc1 = d3.format('.1%');
+const sgn = (v, f = f1) => { const s = f(Math.abs(v)); return (+s === 0 ? '' : v > 0 ? '+' : '−') + s; };
+const fp = p => p < 0.001 ? (p < 1e-4 ? 'p < 0.0001' : 'p < 0.001') : 'p = ' + (p < 0.01 ? d3.format('.3f')(p) : d3.format('.2f')(p));
+const fq = q => q < 0.001 ? 'q < 0.001' : 'q = ' + (q < 0.01 ? d3.format('.3f')(q) : d3.format('.2f')(q));
+const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
+const setVH = () => document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
+setVH(); addEventListener('orientationchange', () => setTimeout(setVH, 300));
+
+/* ---------- frame ---------- */
+function frame(el, o = {}) {
+  el.innerHTML = '';
+  const W = Math.max(300, el.clientWidth || 640);
+  const small = W < 560;
+  const m = Object.assign({ t: 26, r: small ? 12 : 22, b: 48, l: 44 }, o.m || {});
+  if (typeof m.r === 'function') m.r = m.r(small);
+  let H = o.h ? (typeof o.h === 'function' ? o.h(W, small) : o.h) : Math.round(Math.min(small ? 360 : 480, Math.max(290, innerHeight * (small ? .46 : .6))));
+  if (small && !o.tall) H = Math.round(Math.min(H, Math.max(300, innerHeight * .56)));
+  const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', o.aria || '');
+  const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
+  const F = { svg, g, W, H, iw: W - m.l - m.r, ih: H - m.t - m.b, m, small, boxes: [] };
+  F.labels = svg.append('g').attr('class', 'labels').attr('transform', `translate(${m.l},${m.t})`);
+  return F;
+}
+// equal-scale frame for PCA: height follows the data's aspect ratio
+function eqFrame(el, xs, ys, o = {}) {
+  const W = Math.max(300, el.clientWidth || 640), small = W < 560;
+  const m = Object.assign({ t: 30, r: 14, b: 48, l: 44 }, o.m || {});
+  const xr = d3.extent(xs), yr = d3.extent(ys), pad = .06;
+  const dx = (xr[1] - xr[0]) * (1 + 2 * pad), dy = (yr[1] - yr[0]) * (1 + 2 * pad);
+  const iw = W - m.l - m.r; let ih = iw * dy / dx; const maxH = Math.min(small ? 420 : 560, innerHeight * .62);
+  let iw2 = iw; if (ih > maxH) { ih = maxH; iw2 = ih * dx / dy; }
+  const F = frame(el, { h: Math.round(ih + m.t + m.b), m: Object.assign({}, m, { r: m.r + (iw - iw2) }), aria: o.aria });
+  const cx = (xr[0] + xr[1]) / 2, cy = (yr[0] + yr[1]) / 2;
+  F.x = d3.scaleLinear([cx - dx / 2, cx + dx / 2], [0, F.iw]); F.y = d3.scaleLinear([cy - dy / 2, cy + dy / 2], [F.ih, 0]);
+  return F;
+}
+
+/* ---------- axes: Reuters-style y labels above gridlines ---------- */
+function yGrid(F, y, o = {}) {
+  const ticks = o.ticks || y.ticks(o.n || 5), fmt = o.fmt || (d => d);
+  const g = F.g.append('g').attr('class', 'grid');
+  const t = g.selectAll('g').data(ticks).join('g').attr('transform', d => `translate(0,${y(d)})`);
+  t.append('line').attr('x1', o.x0 || 0).attr('x2', F.iw).style('stroke', d => (o.base !== undefined && d === o.base) ? V('ink') : V('grid'));
+  const tl = F.labels.append('g').attr('class', 'ylabels');
+  const tx = tl.selectAll('text').data(ticks).join('text').attr('x', -7).attr('y', d => y(d)).attr('dy', '.35em').attr('text-anchor', 'end').style('font-size', '12px').text((d, i) => fmt(d, i));
+  tx.each(function () { F.boxes.push(bbox(this, F)); });
+  return g;
+}
+function xAxis(F, x, o = {}) {
+  const ticks = o.ticks || x.ticks(o.n || (F.small ? 4 : 7)), fmt = o.fmt || (d => d);
+  const g = F.g.append('g').attr('transform', `translate(0,${F.ih})`);
+  if (!o.nobase) g.append('line').attr('x1', 0).attr('x2', F.iw).style('stroke', V('ink'));
+  g.selectAll('text').data(ticks).join('text').attr('x', d => (x.bandwidth ? x(d) + x.bandwidth() / 2 : x(d))).attr('y', 20).attr('text-anchor', 'middle').text(fmt);
+  if (o.title) { const t = g.append('text').attr('x', F.iw).attr('y', 40).attr('text-anchor', 'end').style('fill', V('faint')).style('font-size', '12px').text(o.title); }
+  return g;
+}
+function bbox(node, F) { const b = node.getBBox(), ctm = node.getCTM(), root = F.g.node().getCTM();
+  const dx = ctm.e - root.e, dy = ctm.f - root.f; return { x: b.x + dx, y: b.y + dy, w: b.width, h: b.height }; }
+const overlap = (a, b, pad = 2) => a.x < b.x + b.w + pad && a.x + a.w + pad > b.x && a.y < b.y + b.h + pad && a.y + a.h + pad > b.y;
+
+/* ---------- collision-avoiding label placer ----------
+   items: {x, y, text, priority, c, w (weight), size, anchor ('auto'|'start'|'end'|'middle'), dx, dy, cands}
+   Tries candidate offsets around the anchor point, keeps the first position that does not overlap
+   already placed labels, registered obstacles, or the plot edge. Draws a leader line if moved far. Unplaceable labels are dropped. */
+function place(F, items, o = {}) {
+  const g = F.labels, placed = F.boxes;
+  items.sort((a, b) => (b.priority || 0) - (a.priority || 0));
+  const out = [];
+  items.forEach(it => {
+    const t = g.append('text').attr('class', 'halo ' + (it.cls || '')).text(it.text).style('font-size', it.size || '13px')
+      .style('font-weight', it.w || null).style('fill', it.c || null).attr('dy', '0.35em');
+    const bw = t.node().getComputedTextLength(), bh = parseFloat(it.size || 13) * 1.15;
+    const r = it.r || 6;
+    const cands = it.cands || [[r, 0, 'start'], [-r, 0, 'end'], [0, -r - bh / 2, 'middle'], [0, r + bh / 2, 'middle'], [r, -r - 4, 'start'], [-r, -r - 4, 'end'], [r, r + 4, 'start'], [-r, r + 4, 'end'],
+      [r + 14, -18, 'start'], [-r - 14, -18, 'end'], [r + 14, 18, 'start'], [-r - 14, 18, 'end'], [0, -30, 'middle'], [0, 30, 'middle']];
+    let ok = null;
+    for (const [dx, dy, anc] of cands) {
+      const x0 = anc === 'start' ? it.x + dx : anc === 'end' ? it.x + dx - bw : it.x + dx - bw / 2;
+      const box = { x: x0, y: it.y + dy - bh / 2, w: bw, h: bh };
+      const inside = box.x >= -F.m.l + 1 && box.x + box.w <= F.iw + F.m.r - 1 && box.y >= -F.m.t + 2 && box.y + box.h <= F.ih + F.m.b - 2;
+      if (inside && !placed.some(p => overlap(box, p))) { ok = { box, dx, dy, anc }; break; }
+    }
+    if (!ok) { t.remove(); return; }
+    t.attr('x', ok.anc === 'start' ? it.x + ok.dx : ok.anc === 'end' ? it.x + ok.dx : it.x + ok.dx).attr('y', it.y + ok.dy).attr('text-anchor', ok.anc);
+    if (Math.hypot(ok.dx, ok.dy) > 16 && it.leader !== false) {
+      const lx = ok.anc === 'start' ? ok.box.x - 2 : ok.anc === 'end' ? ok.box.x + ok.box.w + 2 : it.x + ok.dx;
+      const ly = ok.anc === 'middle' ? (ok.dy < 0 ? ok.box.y + ok.box.h : ok.box.y) : it.y + ok.dy;
+      g.insert('line', ':first-child').attr('x1', it.x).attr('y1', it.y).attr('x2', lx).attr('y2', ly).style('stroke', V('faint')).style('stroke-width', .8);
+    }
+    placed.push(ok.box); out.push(ok);
+  });
+  return out;
+}
+// register rectangles/points as obstacles so labels avoid data marks
+function obstacle(F, x, y, w, h) { F.boxes.push({ x, y, w, h }); }
+function obstaclePts(F, pts, r = 3) { pts.forEach(p => F.boxes.push({ x: p[0] - r, y: p[1] - r, w: 2 * r, h: 2 * r })); }
+// end-of-line labels: vertical dodge in the right margin
+function endLabels(F, items, gap = 17) {
+  items.sort((a, b) => a.y - b.y);
+  for (let i = 1; i < items.length; i++) if (items[i].y - items[i - 1].y < gap) items[i].y = items[i - 1].y + gap;
+  const over = items.length ? items[items.length - 1].y - (F.ih + 6) : 0;
+  if (over > 0) { items.forEach(d => d.y -= over); for (let i = items.length - 2; i >= 0; i--) if (items[i + 1].y - items[i].y < gap) items[i].y = items[i + 1].y - gap; }
+  items.forEach(d => { const t = F.labels.append('text').attr('class', 'halo').attr('x', F.iw + 6).attr('y', d.y).attr('dy', '.35em').text(d.text)
+    .style('fill', d.c).style('font-weight', d.w || 600).style('font-size', d.size || '13px'); F.boxes.push(bbox(t.node(), F)); });
+}
+function lab(g, x, y, s, o = {}) {
+  const t = g.append('text').attr('x', x).attr('y', y).attr('class', (o.halo === false ? '' : 'halo ') + (o.cls || '')).attr('text-anchor', o.a || 'start').attr('dy', o.dy || '0.35em').text(s);
+  if (o.c) t.style('fill', o.c); if (o.w) t.style('font-weight', o.w); if (o.size) t.style('font-size', o.size);
+  return t;
+}
+function note(F, x, y, s, o = {}) { const t = lab(F.labels, x, y, s, o); F.boxes.push(bbox(t.node(), F)); return t; }
+function fadeIn(sel, delay = 0) { if (!RM) sel.style('opacity', 0).transition().delay(delay).duration(DUR * .7).style('opacity', null); return sel; }
+
+/* ---------- tooltip ---------- */
+function tip(sel, html) {
+  sel.on('pointermove', (ev, d) => {
+    TIP.innerHTML = html(d); TIP.hidden = false;
+    const r = TIP.getBoundingClientRect(); let x = ev.clientX + 14, y = ev.clientY + 14;
+    if (x + r.width > innerWidth - 8) x = ev.clientX - r.width - 14;
+    if (y + r.height > innerHeight - 8) y = ev.clientY - r.height - 14;
+    TIP.style.left = x + 'px'; TIP.style.top = y + 'px';
+  }).on('pointerleave', () => TIP.hidden = true);
+  return sel;
+}
+const T = (h, rows) => `<b>${h}</b>` + rows.map(r => `<br><span class="m">${r[0]}</span> ${r[1]}`).join('');
+function crosshair(F, x, y, series, fx = f0, xname = 'Age') {
+  const g = F.g.append('g'); const ln = g.append('line').attr('y1', 0).attr('y2', F.ih).style('stroke', V('faint')).style('stroke-dasharray', '2 3').style('opacity', 0);
+  const dots = g.selectAll('circle').data(series).join('circle').attr('r', 4).style('fill', d => d.color).style('stroke', V('bg')).style('stroke-width', 1.5).style('opacity', 0);
+  F.g.append('rect').attr('width', F.iw).attr('height', F.ih).style('fill', 'transparent')
+    .on('pointermove', ev => {
+      const [mx] = d3.pointer(ev); const xv = x.invert(mx);
+      const hits = series.map(s => s.pts[d3.minIndex(s.pts, p => Math.abs(p.x - xv))]);
+      ln.attr('x1', x(hits[0].x)).attr('x2', x(hits[0].x)).style('opacity', 1);
+      dots.attr('cx', (d, i) => x(hits[i].x)).attr('cy', (d, i) => y(hits[i].y)).style('opacity', 1);
+      TIP.innerHTML = `<b>${xname} ${fx(hits[0].x)}</b>` + series.map((s, i) => `<br><span style="color:${s.color}">●</span> ${s.name} <b>${s.fmt(hits[i].y)}</b>${hits[i].lo != null ? ` <span class="m">(${s.fmt(hits[i].lo)} to ${s.fmt(hits[i].hi)})</span>` : ''}`).join('');
+      TIP.hidden = false; const r = TIP.getBoundingClientRect(); let px = ev.clientX + 16; if (px + r.width > innerWidth - 8) px = ev.clientX - r.width - 16;
+      TIP.style.left = px + 'px'; TIP.style.top = (ev.clientY - r.height / 2) + 'px';
+    }).on('pointerleave', () => { TIP.hidden = true; ln.style('opacity', 0); dots.style('opacity', 0); });
+}
+function band(g, pts, x, y, color, op = .15) {
+  return g.append('path').datum(pts).attr('d', d3.area().x(d => x(d.x)).y0(d => y(d.lo)).y1(d => y(d.hi)).curve(d3.curveMonotoneX)).style('fill', color).style('opacity', op);
+}
+function line(g, pts, x, y, color, w = 2.5, dash) {
+  const p = g.append('path').datum(pts).attr('d', d3.line().x(d => x(d.x)).y(d => y(d.y)).curve(d3.curveMonotoneX)).style('fill', 'none').style('stroke', color).style('stroke-width', w).style('stroke-linejoin', 'round').style('stroke-linecap', 'round');
+  if (dash) p.style('stroke-dasharray', dash);
+  if (!RM && !dash) { const L = p.node().getTotalLength(); p.style('stroke-dasharray', `${L} ${L}`).style('stroke-dashoffset', L).transition().duration(900).ease(d3.easeCubicOut).style('stroke-dashoffset', 0).on('end', () => p.style('stroke-dasharray', null)); }
+  return p;
+}
+function legend(F, items, x = 0, y = -16) {
+  const g = F.labels.append('g'); let cx = 0, row = 0; const maxW = F.iw - x;
+  items.forEach(it => { const gi = g.append('g');
+    if (it.line) gi.append('line').attr('x1', 0).attr('x2', 14).style('stroke', it.c).style('stroke-width', 2.5);
+    else gi.append('rect').attr('width', 11).attr('height', 11).attr('y', -6).attr('rx', it.dot ? 6 : 1).style('fill', it.c).style('stroke', it.stroke || 'none');
+    const t = gi.append('text').attr('x', 17).attr('dy', '.35em').style('font-size', '12.5px').text(it.t); const w = 17 + t.node().getComputedTextLength();
+    if (cx > 0 && cx + w > maxW) { cx = 0; row++; }
+    gi.attr('transform', `translate(${cx},${row * 17})`); cx += w + 16; });
+  g.attr('transform', `translate(${x},${y - row * 17})`);
+  const b = bbox(g.node(), F); F.boxes.push(b);
+  return g;
+}
+function colorKey(F, scale, x, y, w, lo, hi) {
+  const gid = 'k' + Math.random().toString(36).slice(2), lg = F.svg.append('defs').append('linearGradient').attr('id', gid);
+  d3.range(0, 1.01, .1).forEach(t => lg.append('stop').attr('offset', t).attr('stop-color', scale(scale.domain()[0] + t * (scale.domain()[scale.domain().length - 1] - scale.domain()[0]))));
+  const g = F.labels.append('g').attr('transform', `translate(${x},${y})`);
+  g.append('rect').attr('width', w).attr('height', 8).style('fill', `url(#${gid})`);
+  g.append('text').attr('y', 20).style('font-size', '11.5px').text(lo); g.append('text').attr('x', w).attr('y', 20).attr('text-anchor', 'end').style('font-size', '11.5px').text(hi);
+  F.boxes.push(bbox(g.node(), F));
+}
+const qnorm = p => { // Acklam approximation
+  const a = [-39.6968302866538, 220.946098424521, -275.928510446969, 138.357751867269, -30.6647980661472, 2.50662827745924], b = [-54.4760987982241, 161.585836858041, -155.698979859887, 66.8013118877197, -13.2806815528857], c = [-.00778489400243029, -.322396458041136, -2.40075827716184, -2.54973253934373, 4.37466414146497, 2.93816398269878], d = [.00778469570904146, .32246712907004, 2.445134137143, 3.75440866190742];
+  if (p <= 0 || p >= 1) return NaN; const pl = .02425; let q, r;
+  if (p < pl) { q = Math.sqrt(-2 * Math.log(p)); return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+  if (p > 1 - pl) { q = Math.sqrt(-2 * Math.log(1 - p)); return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+  q = p - .5; r = q * q; return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1); };
+const wilson = (k, n) => { if (!n) return [NaN, NaN]; const z = 1.96, p = k / n, d = 1 + z * z / n, c = (p + z * z / (2 * n)) / d, h = z * Math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / d; return [Math.max(0, c - h), Math.min(1, c + h)]; };
+const onFill = col => { const c = d3.color(col); if (!c) return '#fff'; const l = d3.hsl(c).l; return l > .58 ? '#121212' : '#ffffff'; };
+function hbar(F, rows, o) { // rows: {k, v, c, sub}; o: {x domain, fmt, lw}
+  const lw = o.lw || (F.small ? 104 : 150), rh = o.rh || 38;
+  const y = d3.scaleBand(rows.map(d => d.k), [0, Math.min(F.ih - 20, rows.length * rh)]).padding(.3), x = d3.scaleLinear(o.domain, [lw, F.iw - (o.rpad || 56)]);
+  (o.ticks || x.ticks(4)).forEach(t => { F.g.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', 0).attr('y2', y.range()[1]).style('stroke', t === 0 ? V('ink') : V('grid'));
+    F.g.append('text').attr('x', x(t)).attr('y', y.range()[1] + 16).attr('text-anchor', 'middle').text((o.tfmt || o.fmt)(t)); });
+  const g = F.g.selectAll('g.r').data(rows).join('g').attr('transform', d => `translate(0,${y(d.k)})`);
+  if (o.track) g.append('rect').attr('x', x(o.domain[0])).attr('height', y.bandwidth()).attr('width', x(o.domain[1]) - x(o.domain[0])).style('fill', V('context-2'));
+  const b = g.append('rect').attr('x', d => x(Math.min(0, d.v))).attr('height', y.bandwidth()).attr('width', d => Math.abs(x(d.v) - x(0))).style('fill', d => d.c);
+  if (!RM) b.attr('width', 0).attr('x', x(0)).transition().duration(DUR).attr('x', d => x(Math.min(0, d.v))).attr('width', d => Math.abs(x(d.v) - x(0)));
+  g.append('text').attr('class', 't-ink t-b').attr('y', y.bandwidth() / 2).attr('dy', d => d.sub ? '-.35em' : '.35em').style('font-size', F.small ? '12.5px' : '13.5px').text(d => d.k);
+  g.filter(d => d.sub).append('text').attr('y', y.bandwidth() / 2).attr('dy', '1.2em').style('font-size', '11.5px').text(d => d.sub);
+  g.filter(d => d.lo != null).append('line').attr('x1', d => x(d.lo)).attr('x2', d => x(d.hi)).attr('y1', y.bandwidth() / 2).attr('y2', y.bandwidth() / 2).style('stroke', V('ink')).style('stroke-width', 1.5);
+  g.append('text').attr('class', 't-ink t-b halo').attr('x', d => x(d.hi != null ? Math.max(d.v, d.hi) : d.v) + (d.v < 0 ? -6 : 6)).attr('text-anchor', d => d.v < 0 ? 'end' : 'start').attr('y', y.bandwidth() / 2).attr('dy', '.35em').text(d => o.fmt(d.v));
+  if (o.tip) tip(g, o.tip);
+  return { x, y, g };
+}
+function forest(F, rows, o) { // rows: {k, est, lo, hi, c, filled}
+  const lw = o.lw || (F.small ? 118 : 180), rh = o.rh || Math.min(46, (F.ih - 30) / rows.length);
+  const y = d3.scaleBand(rows.map(d => d.k), [0, rows.length * rh]).padding(.2), x = d3.scaleLinear(o.domain, [lw, F.iw - (o.values === false ? 8 : 40)]);
+  (o.ticks || x.ticks(5)).forEach(t => { F.g.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', 0).attr('y2', y.range()[1]).style('stroke', t === (o.ref || 0) ? V('ink') : V('grid'));
+    F.g.append('text').attr('x', x(t)).attr('y', y.range()[1] + 16).attr('text-anchor', 'middle').text(o.tfmt(t)); });
+  if (o.xtitle) F.g.append('text').attr('x', F.iw - 8).attr('y', y.range()[1] + 33).attr('text-anchor', 'end').style('font-size', '12px').style('fill', V('faint')).text(o.xtitle);
+  const g = F.g.selectAll('g.f').data(rows).join('g').attr('transform', d => `translate(0,${y(d.k) + y.bandwidth() / 2 + (d.off || 0)})`);
+  g.filter(d => !d.hideLabel).append('text').attr('class', 't-ink').attr('dy', '.35em').style('font-size', F.small ? '12px' : '13.5px').text(d => d.k.replace(/\|.*/, ''));
+  g.append('line').attr('x1', d => x(Math.max(o.domain[0], d.lo))).attr('x2', d => x(Math.min(o.domain[1], d.hi))).style('stroke', d => d.c).style('stroke-width', 2.4).style('stroke-linecap', 'round');
+  g.append('circle').attr('cx', d => x(d.est)).attr('r', 6).style('fill', d => d.filled === false ? V('bg') : d.c).style('stroke', d => d.c).style('stroke-width', 2);
+  if (o.values !== false) g.append('text').attr('class', 'halo').attr('x', d => x(Math.min(o.domain[1], d.hi)) + 7).attr('dy', '.35em').style('font-size', '12px').text(d => o.fmt(d.est));
+  if (o.tip) tip(g, o.tip);
+  return { x, y, g };
+}
+
+const S = [];
+const RMARG = s => s ? 86 : 112;
+
+/* ===================== 1. THE DIABETES ICEBERG ===================== */
+{
+  const D = DATA.d1, O = D.overall[0];
+  const cats = ['Diagnosed', 'Undiagnosed', 'Prediabetes', 'Normoglycaemic'];
+  const catC = { Diagnosed: V('r3'), Undiagnosed: V('r2'), Prediabetes: V('r1'), Normoglycaemic: V('r0') };
+  const bands = [...new Set(D.bands.map(d => d.band))];
+  const byB = d3.group(D.bands, d => d.band);
+  const at = (b, c) => (byB.get(b).find(d => d.cat === c) || { share: 0 }).share;
+  const dys50 = 1 - at('50-59', 'Normoglycaemic');
+  const cas = D.cascade, unaware = cas[0].n - cas[1].n, notT = cas[1].n - cas[2].n, aw = D.awareness;
+  function stacked(el, order, hl, animateFrom) {
+    const F = frame(el, { m: { r: s => s ? 12 : 116, t: (el.clientWidth || 600) < 560 ? 56 : 22 }, aria: 'Stacked columns of glycaemic status by age band' });
+    const x = d3.scaleBand(bands, [0, F.iw]).padding(.24), y = d3.scaleLinear([0, 1], [F.ih, 0]);
+    yGrid(F, y, { ticks: [0, .25, .5, .75, 1], fmt: pc0 });
+    const mk = ord => { const st = d3.stack().keys(ord).value((b, k) => at(b, k))(bands); const o = {}; st.forEach(l => l.forEach((d, j) => o[l.key + j] = d)); return o; };
+    const P1 = mk(order), P0 = animateFrom ? mk(animateFrom) : P1;
+    const cells = cats.flatMap(k => bands.map((b, j) => ({ k, b, j })));
+    const r = F.g.append('g').selectAll('rect').data(cells, d => d.k + d.j).join('rect').attr('x', d => x(d.b)).attr('width', x.bandwidth())
+      .attr('y', d => y(P0[d.k + d.j][1])).attr('height', d => Math.max(0, y(P0[d.k + d.j][0]) - y(P0[d.k + d.j][1]) - 1))
+      .style('fill', d => (!hl || d.k === hl) ? catC[d.k] : V('context-2'));
+    if (animateFrom && !RM) r.transition().delay(250).duration(DUR).ease(d3.easeCubicInOut).attr('y', d => y(P1[d.k + d.j][1])).attr('height', d => Math.max(0, y(P1[d.k + d.j][0]) - y(P1[d.k + d.j][1]) - 1));
+    else r.attr('y', d => y(P1[d.k + d.j][1])).attr('height', d => Math.max(0, y(P1[d.k + d.j][0]) - y(P1[d.k + d.j][1]) - 1));
+    tip(r, d => T(d.b, [[d.k, pc1(at(d.b, d.k))], ['Participants in band', byB.get(d.b)[0].n]]));
+    const vis = cells.filter(d => !hl || d.k === hl);
+    const lbl = F.g.append('g').selectAll('text').data(vis.filter(d => y(P1[d.k + d.j][0]) - y(P1[d.k + d.j][1]) > 17 && x.bandwidth() > 28)).join('text')
+      .attr('x', d => x(d.b) + x.bandwidth() / 2).attr('y', d => (y(P1[d.k + d.j][0]) + y(P1[d.k + d.j][1])) / 2).attr('dy', '.35em').attr('text-anchor', 'middle')
+      .style('font-size', F.small ? '11px' : '12px').style('font-weight', 600).style('fill', d => onFill(css({ Diagnosed: 'r3', Undiagnosed: 'r2', Prediabetes: 'r1', Normoglycaemic: 'r0' }[d.k]))).text(d => pc0(at(d.b, d.k)));
+    fadeIn(lbl, animateFrom ? DUR + 250 : 0);
+    xAxis(F, x, { ticks: bands, nobase: true });
+    if (!F.small) { const last = order.map(k => ({ text: k, y: (y(P1[k + (bands.length - 1)][0]) + y(P1[k + (bands.length - 1)][1])) / 2, c: (!hl || k === hl) ? V('ink') : V('faint'), w: k === hl ? 700 : 500 })); endLabels(F, last, 16); }
+    else legend(F, order.slice().reverse().map(k => ({ t: k, c: (!hl || k === hl) ? catC[k] : V('context-2') })), 0, -26);
+  }
+  const dmShare = b => at(b, 'Diagnosed') + at(b, 'Undiagnosed');
+  const YD = { guess: bands.map((b, j) => j === 0 ? dmShare(b) : null), shown: false };
+  function youDraw(el) {
+    const F = frame(el, { m: { t: 30, r: s => s ? 60 : 110, b: 48 }, aria: 'Interactive: draw your guess of diabetes prevalence by age band' });
+    const x = d3.scalePoint(bands, [20, F.iw - 20]), y = d3.scaleLinear([0, .7], [F.ih, 0]);
+    yGrid(F, y, { ticks: [0, .1, .2, .3, .4, .5, .6, .7], fmt: pc0, base: 0 }); xAxis(F, x, { ticks: bands, nobase: true });
+    note(F, 0, -16, 'share of adults with diabetes (diagnosed or by HbA1c)', { size: '12px', c: V('faint') });
+    const gG = F.g.append('g'), aG = F.g.append('g'), lG = F.labels.append('g');
+    const ln = d3.line().defined(d => d.v != null).x(d => x(d.b)).y(d => y(d.v));
+    function paint() {
+      gG.selectAll('*').remove(); lG.selectAll('*').remove();
+      const pts = bands.map((b, j) => ({ b, v: YD.guess[j] }));
+      gG.append('path').attr('d', ln(pts)).style('fill', 'none').style('stroke', V('ink')).style('stroke-width', 2.5).style('stroke-dasharray', '6 4');
+      gG.selectAll('circle').data(pts.filter(d => d.v != null)).join('circle').attr('cx', d => x(d.b)).attr('cy', d => y(d.v)).attr('r', 5.5).style('fill', V('bg')).style('stroke', V('ink')).style('stroke-width', 2);
+      bands.forEach((b, j) => { if (YD.guess[j] == null && !YD.shown) gG.append('text').attr('x', x(b)).attr('y', y(.35)).attr('text-anchor', 'middle').style('font-size', '22px').style('fill', V('context')).text('?'); });
+      if (YD.shown) {
+        const A = bands.map(b => ({ b, v: dmShare(b) }));
+        const p = aG.selectAll('path').data([A]).join('path').attr('d', ln).style('fill', 'none').style('stroke', V('accent')).style('stroke-width', 3.5);
+        aG.selectAll('circle').data(A).join('circle').attr('cx', d => x(d.b)).attr('cy', d => y(d.v)).attr('r', 6).style('fill', V('accent')).style('stroke', V('bg')).style('stroke-width', 1.5);
+        A.forEach(d => obstacle(F, x(d.b) - 7, y(d.v) - 7, 14, 14));
+        place(F, A.map(d => ({ x: x(d.b), y: y(d.v), text: pc0(d.v), c: V('accent'), w: 700, size: '13px', r: 9, priority: 3, cands: [[0, -16, 'middle'], [0, 18, 'middle'], [10, 0, 'start']] })));
+        const g = YD.guess.map((v, j) => v == null ? null : Math.abs(v - A[j].v)).filter((v, j) => v != null && j > 0);
+        const msg = g.length ? `Your guess was off by ${f0(100 * d3.mean(g))} points on average` : 'This is the real curve';
+        endLabels(F, [{ text: 'Actual', y: y(A[A.length - 1].v), c: V('accent') }].concat(YD.guess[bands.length - 1] != null ? [{ text: 'Your guess', y: y(YD.guess[bands.length - 1]), c: V('ink') }] : []));
+        note(F, 0, F.ih + 34, msg, { size: '13px', cls: 't-ink', w: 700 });
+      }
+    }
+    aG.style('pointer-events', 'none');
+    const setAt = ev => { if (YD.shown) return; const [mx, my] = d3.pointer(ev, F.g.node()); const j = d3.minIndex(bands, b => Math.abs(x(b) - mx)); if (j === 0) return;
+      YD.guess[j] = Math.max(0, Math.min(.7, y.invert(my))); paint(); upd(); };
+    let down = false;
+    F.g.append('rect').attr('width', F.iw).attr('height', F.ih).style('fill', 'transparent').style('cursor', YD.shown ? 'default' : 'crosshair').style('touch-action', YD.shown ? 'auto' : 'none')
+      .on('pointerdown', ev => { down = true; ev.target.setPointerCapture && ev.target.setPointerCapture(ev.pointerId); setAt(ev); })
+      .on('pointermove', ev => { if (down) setAt(ev); }).on('pointerup pointercancel', () => down = false);
+    const bar = d3.select(el).append('div').attr('class', 'ydbar');
+    const btn = bar.append('button').attr('class', 'ydbtn').on('click', () => { YD.shown = true; paint(); upd(); });
+    const skip = bar.append('button').attr('class', 'ydskip').text('Skip, show me').on('click', () => { YD.shown = true; paint(); upd(); });
+    function upd() { const done = YD.guess.every(v => v != null); btn.text(YD.shown ? 'Revealed' : done ? 'Show me the real numbers' : 'Drag across the chart to draw your guess').property('disabled', YD.shown || !done); skip.style('display', YD.shown || done ? 'none' : null); }
+    paint(); upd();
+  }
+  const PEOPLE = (() => { const nd = Math.round(100 * O.diabetes), nu = Math.round(nd * O.undiagnosed / O.diabetes), nc = Math.round(nd * cas[2].share), np = Math.round(100 * O.prediabetes);
+    return { nd, nu, nk: nd - nu, nc, np, nn: 100 - nd - np }; })();
+  let peopleLast = -1, peoplePos = null;
+  const PCOL = { u: '#c62828', k: '#c62828', c: V('blue'), p: '#e0a800', n: V('context') };
+  function people(el, stage) {
+    const Pp = PEOPLE, F = frame(el, { tall: true, m: { t: 16, l: 8, r: 8, b: 12 }, h: (W, s) => s ? 520 : Math.min(470, Math.max(400, innerHeight * .6)), aria: '100 people pictogram' });
+    const small = F.small, gw = small ? F.iw : F.iw * .5, cell = Math.min(gw / 10, (small ? F.ih * .5 : F.ih) / 10.4);
+    const ppl = d3.range(100).map(k => ({ k, g: k < Pp.nu ? 'u' : k < Pp.nu + Pp.nc ? 'c' : k < Pp.nd ? 'k' : k < Pp.nd + Pp.np ? 'p' : 'n' }));
+    const gridXY = k => [(k % 10) * cell + cell / 2, Math.floor(k / 10) * cell + cell / 2];
+    const ox = small ? 0 : gw + 28, oy = small ? cell * 10 + 34 : 30, aw = small ? F.iw : F.iw - ox, c2 = Math.min(cell * 1.15, aw / 14.5);
+    const big0 = small ? 22 : 30, rowY = r => oy + big0 + 4 + r * (c2 + big0 + 22);
+    const row = (k, n, r) => [ox + (k % 14) * c2 + c2 / 2, rowY(r) + Math.floor(k / 14) * c2 + c2 * .55];
+    const pos = p => {
+      if (stage === 0) return gridXY(p.k);
+      if (p.g === 'u') return row(p.k, Pp.nu, 0);
+      if (stage === 1) { if (p.g === 'c' || p.g === 'k') return row(p.k - Pp.nu, Pp.nk, 1); return gridXY(p.k); }
+      if (p.g === 'k') return row(p.k - Pp.nu - Pp.nc, Pp.nk - Pp.nc, 1);
+      if (p.g === 'c') return row(p.k - Pp.nu, Pp.nc, 2);
+      return gridXY(p.k); };
+    const colr = p => stage === 2 && p.g === 'c' ? PCOL.c : (p.g === 'c' ? PCOL.k : PCOL[p.g]);
+    const op = p => stage === 0 ? 1 : (p.g === 'p' || p.g === 'n') ? .18 : 1;
+    const icon = s => `M0,${-s * .42} m${-s * .15},0 a${s * .15},${s * .15} 0 1,0 ${s * .3},0 a${s * .15},${s * .15} 0 1,0 ${-s * .3},0 M${-s * .27},${s * .42} L${-s * .27},${s * .02} Q${-s * .27},${-s * .18} ${-s * .08},${-s * .18} L${s * .08},${-s * .18} Q${s * .27},${-s * .18} ${s * .27},${s * .02} L${s * .27},${s * .42} Z`;
+    const sizeOf = p => (stage > 0 && (p.g === 'u' || p.g === 'k' || p.g === 'c')) ? c2 * .92 : cell * .92;
+    const prev = peoplePos && Math.abs(peopleLast - stage) === 1 ? peoplePos : null;
+    const g = F.g.append('g').selectAll('path').data(ppl).join('path').attr('d', p => icon(sizeOf(p)))
+      .attr('transform', p => { const [x, y] = prev ? prev[p.k] : pos(p); return `translate(${x},${y})`; })
+      .style('fill', colr).style('opacity', op);
+    if (prev && !RM) g.transition().duration(900).delay(p => (p.g === 'u' ? 0 : p.g === 'c' ? 250 : 120) + (p.k % 14) * 12).ease(d3.easeCubicInOut).attr('transform', p => { const [x, y] = pos(p); return `translate(${x},${y})`; });
+    else if (!prev && !RM && stage === 0) g.style('opacity', 0).transition().delay(p => p.k * 9).duration(250).style('opacity', op);
+    else g.attr('transform', p => { const [x, y] = pos(p); return `translate(${x},${y})`; });
+    peoplePos = Object.fromEntries(ppl.map(p => [p.k, pos(p)])); peopleLast = stage;
+    const L = F.labels, big = small ? 22 : 30;
+    const lab2 = (x, y, n, txt, c, delay = 0, sub) => { const t = L.append('g').attr('transform', `translate(${x},${y})`);
+      if (sub && !small) t.append('text').attr('x', String(n).length * big * .58 + 6).attr('y', 13).style('font-size', '11.5px').style('fill', V('muted')).text(sub);
+      t.append('text').style('font', `700 ${big}px var(--sans)`).style('fill', c).text(n);
+      t.append('text').attr('x', String(n).length * big * .58 + 6).attr('y', -2).style('font-size', small ? '12px' : '13.5px').attr('class', 't-ink').text(txt);
+      if (!RM) t.style('opacity', 0).transition().delay(delay).duration(400).style('opacity', 1); };
+    if (stage === 0) {
+      const lx = small ? 0 : gw + 28, ly = small ? cell * 10 + 40 : F.ih * .28;
+      const sp = big + (small ? 14 : 24);
+      lab2(lx, ly, Pp.nd, 'have diabetes', PCOL.u, 400, 'HbA1c 6.5% or higher, or diagnosed'); lab2(lx, ly + sp, Pp.np, 'have prediabetes', PCOL.p, 700, 'HbA1c 5.7 to 6.4%'); lab2(lx, ly + 2 * sp, Pp.nn, 'have normal blood sugar', V('muted'), 1000, 'HbA1c below 5.7%');
+    } else {
+      lab2(ox, rowY(0) - 6, Pp.nu, 'did not know they had diabetes', PCOL.u, 700);
+      if (stage === 1) lab2(ox, rowY(1) - 6, Pp.nk, 'knew', PCOL.k, 900);
+      else { lab2(ox, rowY(1) - 6, Pp.nk - Pp.nc, 'knew, but blood sugar not controlled', PCOL.k, 900); lab2(ox, rowY(2) - 6, Pp.nc, 'knew and at target (HbA1c below 7%)', PCOL.c, 1100); }
+    }
+    if (!small) L.append('text').attr('x', 0).attr('y', cell * 10 + 22).style('font-size', '12px').style('fill', V('faint')).text('each figure = 1 in 100 adults');
+  }
+  S.push({
+    id: 'diabetes', tab: 'Diabetes iceberg', part: 'Burden',
+    h: 'Half of the diabetes in this cohort is invisible to the people who have it',
+    dek: 'An HbA1c test finds as many undiagnosed cases as diagnosed ones. Among those who know, few are controlled.',
+    stats: [],
+    steps: [
+      { p: `<p>Picture 100 adults from this cohort. <strong style="color:#c62828">${PEOPLE.nd} of them have diabetes</strong>: an HbA1c blood test of 6.5% or more, or a doctor's diagnosis.</p><p>Another <strong style="color:#b58700">${PEOPLE.np} have prediabetes</strong>, blood sugar already above normal. Fewer than half have normal blood sugar.</p>`, t: `${PEOPLE.nd} in every 100 adults have diabetes`, s: 'Each figure is one adult. Red: diabetes (HbA1c 6.5% or more, or diagnosed); yellow: prediabetes (HbA1c 5.7 to 6.4%); grey: normal (below 5.7%)' },
+      { p: `<p>Now follow only the ${PEOPLE.nd} with diabetes.</p><p><strong>${PEOPLE.nu} of them had never been told.</strong> They found out from this study's blood test. That is half of all diabetes in the cohort, hidden from the people who have it.</p>`, t: `${PEOPLE.nu} of the ${PEOPLE.nd} did not know they had diabetes`, s: 'The people with diabetes, split by whether they had been diagnosed' },
+      { p: `<p>Of the ${PEOPLE.nk} who knew, <strong>only ${PEOPLE.nc} have their blood sugar under control</strong> (HbA1c below 7%).</p><p>So of every ${PEOPLE.nd} people with diabetes, ${PEOPLE.nd - PEOPLE.nc} are either unaware or above target.</p>`, t: `Only ${PEOPLE.nc} of ${PEOPLE.nd} are diagnosed and at target`, s: 'The people who knew, split by HbA1c below 7% (blue) or not' },
+      { p: `<p>Before the numbers, a test. How common do you think diabetes is at each age? We have filled in the youngest band.</p><p><strong>Draw the rest of the line</strong> on the chart, then press the button to compare your guess with what the blood tests found.</p>`, t: 'Draw it: what share of adults have diabetes at each age?', s: 'Drag up and down across each age band; diabetes means a diagnosis or HbA1c of 6.5% or more' },
+      { p: `<p>Each participant with an HbA1c result falls into one of four groups: diagnosed diabetes, <strong>undiagnosed</strong> diabetes (HbA1c at least 6.5% but never told), prediabetes (5.7 to 6.4%) or normal.</p><p>By their fifties, <strong>${pc0(dys50)}</strong> of adults are no longer normoglycaemic.</p>`, t: `By their fifties, ${pc0(dys50)} of adults have abnormal blood sugar`, s: 'Share of participants in each glycaemic group, by age band' },
+      { p: `<p>Pull the undiagnosed group down to the baseline. <strong>${pc1(O.undiagnosed)}</strong> of the cohort has diabetes by HbA1c and has never been told, about as many as the ${pc1(O.diagnosed)} already diagnosed.</p><p>The undiagnosed share is largest in middle age.</p>`, t: `${pc1(O.undiagnosed)} have undiagnosed diabetes, as many as the ${pc1(O.diagnosed)} diagnosed`, s: 'Share of each age band with undiagnosed diabetes (HbA1c 6.5% or more, no diagnosis)' },
+      { p: `<p>Among people with diabetes, awareness climbs with age, from about one in four in their thirties to <strong>${pc0(aw[5].aware)}</strong> after 70.</p><p>Part of this is simply time: the longer someone has had diabetes, the more symptoms, check-ups and chances to be tested they have met. Survival may also play a part, if people with long-undiagnosed diabetes die younger. Either way, the youngest are the least likely to know and the most likely to live longest with the disease.</p>`, t: `Awareness rises from ${pc0(aw[1].aware)} in the thirties to ${pc0(aw[5].aware)} after 70`, s: 'Share of people with diabetes who report a diagnosis; lines are exact 95% binomial intervals' },
+      { p: `<p>Young people with diabetes have <strong>lower</strong> creatinine than their peers without diabetes, the pattern expected from hyperfiltration, an early stage of diabetic kidney disease.</p><p>The gap closes with age (age × diabetes interaction ${fp(D.kidney[0].p_interaction)}, not adjusted for muscle mass). Two forces can close it: filtration that first runs high later declines as diabetic kidney disease (nephropathy) progresses, and survival, since people whose kidneys fail earliest are less likely to reach older age and join a study. Diabetic kidney disease is common in India: 46% of adults with type 2 diabetes attending clinics had it in the START-India study. Once kidneys fail, survival is short: among US adults on dialysis aged 65 to 69, 25% die within one year and 42% within two, against 10% and 12% at ages 25 to 29 (US Renal Data System).</p><p>Few people under 40 have diabetes, so the youngest part of the curve is the least certain.</p>`, t: 'Young people with diabetes have lower creatinine, a hint of kidney hyperfiltration', s: 'Modelled serum creatinine (mg/dL) by age and diabetes status (GAMM fit)' }
+    ],
+    src: `Source: BHARAT study, n = ${O.n.toLocaleString()} with HbA1c. Thresholds: American Diabetes Association.`,
+    draw(el, i) {
+      if (i < 3) return people(el, i);
+      i -= 3;
+      if (i === 0) return youDraw(el);
+      i -= 1;
+      if (i === 0) stacked(el, cats, null);
+      else if (i === 1) stacked(el, ['Undiagnosed', 'Diagnosed', 'Prediabetes', 'Normoglycaemic'], 'Undiagnosed', cats);
+      else if (i === 2) {
+        const F = frame(el, { m: { t: 22, b: 48 } });
+        const x = d3.scaleBand(aw.map(d => d.band), [0, F.iw]).padding(.4), y = d3.scaleLinear([0, 1], [F.ih, 0]);
+        yGrid(F, y, { ticks: [0, .25, .5, .75, 1], fmt: pc0 });
+        const ov = cas[1].share;
+        F.g.append('line').attr('x1', 0).attr('x2', F.iw).attr('y1', y(ov)).attr('y2', y(ov)).style('stroke', V('ink')).style('stroke-dasharray', '3 3');
+        const g = F.g.append('g').selectAll('g').data(aw).join('g').attr('transform', d => `translate(${x(d.band) + x.bandwidth() / 2},0)`);
+        g.append('line').attr('y1', d => y(d.lo)).attr('y2', d => y(d.hi)).style('stroke', V('accent')).style('stroke-width', 2.2).style('opacity', .5);
+        g.append('circle').attr('cy', d => y(d.aware)).attr('r', 7).style('fill', V('accent')).style('stroke', V('bg')).style('stroke-width', 2);
+        aw.forEach(d => { const cx = x(d.band) + x.bandwidth() / 2; obstacle(F, cx - 8, y(d.hi), 16, y(d.lo) - y(d.hi)); });
+        g.append('text').attr('y', F.ih + 36).attr('text-anchor', 'middle').style('font-size', '11.5px').style('fill', V('faint')).text(d => 'n = ' + d.n);
+        tip(g, d => T(d.band, [['Aware of diagnosis', pc0(d.aware)], ['95% CI', `${pc0(d.lo)} to ${pc0(d.hi)}`], ['People with diabetes', d.n]]));
+        fadeIn(g); xAxis(F, x, { ticks: aw.map(d => d.band), nobase: true });
+        place(F, aw.map(d => ({ x: x(d.band) + x.bandwidth() / 2, y: y(d.aware), text: pc0(d.aware), w: 700, cls: 't-ink', r: 10, priority: 2, cands: [[11, 0, 'start'], [-11, 0, 'end']] })));
+        place(F, [{ x: F.iw, y: y(ov), text: `All ages: ${pc0(ov)}`, size: '12px', priority: 1, cands: [[0, -10, 'end'], [0, 12, 'end']] }]);
+      } else {
+        const F = frame(el, { m: { r: RMARG, t: 22 } });
+        const k = D.kidney.filter(d => d.analyte === 'creatinine'), grp = d3.group(k, d => d.dmg);
+        const x = d3.scaleLinear(d3.extent(k, d => d.age), [0, F.iw]), y = d3.scaleLinear(d3.extent(k, d => d.fit), [F.ih, 0]).nice();
+        yGrid(F, y, { fmt: f2, unit: ' mg/dL' }); xAxis(F, x, { title: 'Age' });
+        const ser = [['Normoglycaemic', V('faint'), 'No diabetes'], ['Diabetes', V('accent'), 'Diabetes']].map(([key, c, nm]) => ({ name: nm, color: c, fmt: f2, pts: grp.get(key).map(d => ({ x: d.age, y: d.fit })) }));
+        ser.forEach(s => line(F.g, s.pts, x, y, s.color, 3));
+        endLabels(F, ser.map(s => ({ text: s.name, y: y(s.pts[s.pts.length - 1].y), c: s.color })));
+        const near = (s, a) => s.pts[d3.minIndex(s.pts, p => Math.abs(p.x - a))];
+        const n30 = near(ser[0], 30), d30 = near(ser[1], 30);
+        F.g.append('line').attr('x1', x(30)).attr('x2', x(30)).attr('y1', y(n30.y)).attr('y2', y(d30.y)).style('stroke', V('ink'));
+        place(F, [{ x: x(30), y: (y(n30.y) + y(d30.y)) / 2, text: `${f2(n30.y - d30.y)} mg/dL lower at 30`, cls: 't-ink', size: '12.5px', priority: 3, cands: [[8, 0, 'start'], [-8, 0, 'end']] }]);
+        crosshair(F, x, y, ser);
+      }
+    },
+    after: [['How this was done', `Glycaemic status combines HbA1c (ADA cut-offs) with self-reported diagnosis or medication. Awareness is the diagnosed share among everyone meeting either criterion, with exact binomial intervals. Creatinine curves come from a Gaussian GAMM on log creatinine with a diabetes-specific age smooth, sex, and random intercepts for laboratory and site; the interaction is a likelihood-ratio test on ML fits.`],
+      ['What it cannot tell you', `A single HbA1c overstates diabetes where red cells live longer, as in iron deficiency (story 4), so some "undiagnosed" cases, especially in young women, may be misclassified. Diagnoses are self-reported. Hyperfiltration would need measured GFR or albuminuria to confirm.`],
+      ['Reproduce', `<code>data_stories/01_diabetes_iceberg.Rmd</code>`]]
+  });
+}
+
+
+const SOON=[["Iron-poor women", "Burden"], ["Hidden hunger", "Burden"], ["Anaemia bends HbA1c", "Measurement traps"], ["An imported clock", "Measurement traps"], ["Thirteen dimensions", "Measurement traps"], ["The sexes converge", "How bodies age"], ["CRP follows fat", "How bodies age"], ["The ageing proteome", "The proteome"], ["A proteome clock", "The proteome"], ["Neutrophils", "The proteome"]];
+/* ---------- app shell: tabs, lazy build, scrollytelling ---------- */
+(function () {
+  const tabrow = document.getElementById('tabrow'), main = document.getElementById('main');
+  const state = S.map(() => ({ built: false, step: 0, sec: null, io: null }));
+  let active = -1;
+  const tabs = () => [...tabrow.querySelectorAll('button.tab')];
+  let lastPart = null;
+  S.forEach((s, k) => {
+    if (s.part !== lastPart) { const pl = document.createElement('span'); pl.className = 'part'; pl.textContent = s.part; tabrow.appendChild(pl); lastPart = s.part; }
+    const b = document.createElement('button');
+    b.className = 'tab'; b.role = 'tab'; b.id = 'tab-' + s.id; b.setAttribute('aria-controls', 'story-' + s.id);
+    b.innerHTML = `<span class="n">${String(k + 1).padStart(2, '0')}</span>${s.tab}`;
+    b.onclick = () => show(k, true);
+    tabrow.appendChild(b);
+  });
+  SOON.forEach(([t, part]) => {
+    if (part !== lastPart) { const pl = document.createElement('span'); pl.className = 'part'; pl.textContent = part; tabrow.appendChild(pl); lastPart = part; }
+    const b = document.createElement('button'); b.className = 'tab soon'; b.disabled = true; b.setAttribute('aria-disabled', 'true');
+    b.innerHTML = `<span class="n">${String(S.length + SOON.indexOf(SOON.find(s => s[0] === t)) + 1).padStart(2, '0')}</span>${t}<span class="soonlab">soon</span>`; tabrow.appendChild(b); });
+  function build(k) {
+    const s = S[k], st = state[k];
+    const sec = document.createElement('section'); sec.className = 'story'; sec.id = 'story-' + s.id; sec.setAttribute('role', 'tabpanel');
+    sec.innerHTML = `<header class="shead"><div class="kicker">Story ${k + 1} of ${S.length + SOON.length}</div><h2>${s.h}</h2><p class="dek">${s.dek}</p>
+      ${s.stats.length ? `<div class="stats">${s.stats.map(x => `<div class="stat"><b class="${x[2] ? 'acc' : ''}">${x[0]}</b><span>${x[1]}</span></div>`).join('')}</div>` : ''}</header>
+      <div class="scrolly"><div class="steps">${s.steps.map((p, j) => `<div class="step" data-i="${j}">${p.p}</div>`).join('')}</div>
+      <div class="figure"><p class="ctitle"></p><p class="csub"></p><div class="chart"></div><p class="source">${s.src}</p></div></div>
+      <div class="after">${s.after.map(a => `<div><h4>${a[0]}</h4><p>${a[1]}</p></div>`).join('')}</div>
+      ${k < S.length - 1 ? `<p class="next"><button class="nextbtn">Next: ${S[k + 1].tab} →</button></p>` : ''}`;
+    main.appendChild(sec); st.sec = sec; st.built = true;
+    const nb = sec.querySelector('.nextbtn'); if (nb) nb.onclick = () => show(k + 1, true);
+    st.io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) setStep(k, +e.target.dataset.i); }), { rootMargin: innerWidth <= 900 ? '-70% 0px -20% 0px' : '-45% 0px -45% 0px' });
+    sec.querySelectorAll('.step').forEach(el => st.io.observe(el));
+  }
+  function render(k) {
+    const s = S[k], st = state[k], sec = st.sec, p = s.steps[st.step];
+    sec.querySelectorAll('.step').forEach(el => el.classList.toggle('is-active', +el.dataset.i === st.step));
+    const t = sec.querySelector('.ctitle'), sb = sec.querySelector('.csub');
+    t.textContent = p.t; sb.textContent = p.s;
+    TIP.hidden = true;
+    try { s.draw(sec.querySelector('.chart'), st.step); const sv = sec.querySelector('.chart svg'); if (sv) sv.setAttribute('aria-label', p.t + '. ' + p.s); } catch (e) { console.error(s.id, st.step, e); }
+  }
+  function setStep(k, i) { if (k !== active) return; if (state[k].step === i && state[k].drawn) return; state[k].step = i; state[k].drawn = true; render(k); }
+  function show(k, scroll) {
+    if (k === active) return;
+    if (!state[k].built) build(k);
+    state.forEach((st, j) => { if (st.sec) st.sec.hidden = j !== k; });
+    tabs().forEach((b, j) => { b.setAttribute('aria-selected', j === k); b.tabIndex = j === k ? 0 : -1; });
+    active = k; state[k].step = 0; state[k].drawn = true; render(k);
+    tabs()[k].scrollIntoView({ block: 'nearest', inline: 'center', behavior: RM ? 'auto' : 'smooth' });
+    try { history.replaceState(null, '', '#' + S[k].id); } catch (e) { }
+    if (scroll) { const top = main.getBoundingClientRect().top + scrollY - 52; if (scrollY > top) window.scrollTo({ top, behavior: 'auto' }); }
+  }
+  tabrow.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const n = (active + (e.key === 'ArrowRight' ? 1 : S.length - 1)) % S.length; show(n, false); tabs()[n].focus(); } });
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => active >= 0 && render(active), 180); });
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => active >= 0 && render(active));
+  new MutationObserver(() => active >= 0 && render(active)).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  const h = location.hash.slice(1), k0 = Math.max(0, S.findIndex(s => s.id === h));
+  const go = () => show(k0, false);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(go); else go();
+  setTimeout(() => { if (active < 0) go(); }, 1500);
+})();
+
+</script>
+</html>
