@@ -1247,24 +1247,29 @@ const RMARG = s => s ? 86 : 112;
     dek: 'CRP, a blood marker of inflammation, is slightly higher in older adults. BMI has a much larger effect, and the effect is stronger in women than in men.',
     stats: [],
     steps: [
-      { p: `<p>Three markers of inflammation are higher at older ages: <strong>CRP</strong> by ${f1(crp.age_pct_decade)}% per decade, <strong>ESR</strong> by ${f1(A[1].age_pct_decade)}%, and the neutrophil-to-lymphocyte ratio (NLR) by ${f1(A[2].age_pct_decade)}%.</p><p>Adjusting for BMI and diabetes removes only  ${f0(crp.attenuation)}% of the CRP age effect, so weight gain and diabetes with age do not explain it.</p>`, t: 'BMI and diabetes explain little of the age trend', s: 'Percentage difference per decade of age, before (grey) and after (colour) adjustment for BMI and diabetes; labels show adjusted values' },
+      { p: `<p>Three markers of inflammation are higher at older ages: <strong>CRP</strong> by ${f1(crp.age_pct_decade)}% per decade, <strong>ESR</strong> by ${f1(A[1].age_pct_decade)}%, and the neutrophil-to-lymphocyte ratio (NLR) by ${f1(A[2].age_pct_decade)}%.</p><p>Adjusting for BMI and diabetes removes only  ${f0(crp.attenuation)}% of the CRP age effect, so weight gain and diabetes with age do not explain it.</p>`, t: 'BMI and diabetes explain little of the age trend', s: 'Percentage difference per decade of age, before (grey) and after (colour) adjustment for BMI and diabetes' },
       { p: `<p>The level of CRP depends much more on weight. The share above 3 mg/L, a common cardiovascular risk threshold, ranges from <strong>${pc0(gmin.crp_high)}</strong> in lean young adults to <strong>${pc0(gmax.crp_high)}</strong> in obese adults over 65.</p><p>The colour darkens faster along each row (same age, higher BMI) than down each column (same BMI, older).</p>`, t: `High CRP in ${pc0(gmin.crp_high)} of lean young adults and ${pc0(gmax.crp_high)} of obese older adults`, s: 'Share with CRP above 3 mg/L by age band and BMI (kg/m², Asian cut-offs); n in each cell' },
       { p: `<p>Each 5 kg/m² of BMI goes with <strong>${f0(sb('F').pct)}%</strong> higher CRP in women (95% CI ${f0(sb('F').lo)} to ${f0(sb('F').hi)}) and ${f0(sb('M').pct)}% in men (${f0(sb('M').lo)} to ${f0(sb('M').hi)}).</p><p>Women carry more fat under the skin, which releases interleukin-6, the main signal for CRP production. That could explain the sex difference, though we did not test it.</p>`, t: `Each 5 BMI units raises CRP ${f0(sb('F').pct)}% in women and ${f0(sb('M').pct)}% in men`, s: 'Modelled CRP (mg/L, log scale) by BMI and sex, at median age; bands are 95% CIs' }
     ],
     src: 'Source: BHARAT study. Log-scale regressions with laboratory and site random intercepts.',
     draw(el, i) {
       if (i === 0) {
-        const F = frame(el, { m: { t: 34, r: 16, l: 8 }, h: 320 });
-        const lw = F.small ? 60 : 90, rowH = Math.min(84, (F.ih - 30) / 3);
-        const x = d3.scaleLinear([0, 13], [lw, F.iw - 50]);
+        const F = frame(el, { m: { t: 40, r: 12, l: 8, b: 36 }, h: (W, s) => 3 * 70 + 76 });
+        const lw = F.small ? 52 : 90, rowH = 70;
+        const x = d3.scaleLinear([0, 13], [lw, F.iw - 54]);
+        [0, 2].forEach(j => F.g.append('rect').attr('x', 0).attr('y', j * rowH).attr('width', F.iw).attr('height', rowH).style('fill', V('panel')));
         [0, 3, 6, 9, 12].forEach(t => { F.g.append('line').attr('x1', x(t)).attr('x2', x(t)).attr('y1', 0).attr('y2', rowH * 3).style('stroke', t ? V('grid') : V('ink')); F.g.append('text').attr('x', x(t)).attr('y', rowH * 3 + 16).attr('text-anchor', 'middle').text('+' + t + '%'); });
-        legend(F, [{ t: 'Age only', c: V('context'), dot: 1 }, { t: 'Adjusted for BMI and diabetes', c: V('accent'), dot: 1 }], lw, -18);
+        F.g.append('text').attr('x', F.iw - 54).attr('y', rowH * 3 + 32).attr('text-anchor', 'end').style('font-size', '12px').style('fill', V('faint')).text('higher per decade of age →');
+        legend(F, [{ t: 'Age only', c: V('context'), dot: 1 }, { t: 'Adjusted for BMI and diabetes', c: V('accent'), dot: 1 }], lw, -24);
         const r = F.g.selectAll('g.r').data(A).join('g').attr('transform', (d, j) => `translate(0,${j * rowH + rowH / 2})`);
         r.append('text').attr('class', 't-ink t-b').attr('dy', '.35em').text(d => d.marker);
-        r.append('circle').attr('cx', d => x(d.age_pct_decade)).attr('r', 9).style('fill', V('context'));
-        r.append('circle').attr('cx', d => x(d.age_pct_decade)).attr('r', 6).style('fill', V('accent')).style('stroke', V('bg')).style('stroke-width', 2)
-          .transition().duration(DUR * 1.4).delay(300).attr('cx', d => x(d.age_pct_decade_adj));
-        r.append('text').attr('class', 'halo t-b').attr('x', d => x(Math.max(d.age_pct_decade, d.age_pct_decade_adj)) + 14).attr('dy', '.35em').text(d => `+${f1(d.age_pct_decade_adj)}%`);
+        [['age_pct_decade', -11, V('context'), V('muted')], ['age_pct_decade_adj', 11, V('accent'), V('accent')]].forEach(([k, dy, c, tc], q) => {
+          const ln = r.append('line').attr('x1', x(0)).attr('x2', x(0)).attr('y1', dy).attr('y2', dy).style('stroke', c).style('stroke-width', 3);
+          const dot = r.append('circle').attr('cx', x(0)).attr('cy', dy).attr('r', 6.5).style('fill', c);
+          const lab = r.append('text').attr('class', 'halo t-b').attr('y', dy).attr('dy', '.35em').style('font-size', '12.5px').style('fill', tc).attr('x', d => x(d[k]) + 12).text(d => `+${f1(d[k])}%`);
+          if (!RM) { ln.transition().delay(q * 350).duration(DUR).attr('x2', d => x(d[k])); dot.transition().delay(q * 350).duration(DUR).attr('cx', d => x(d[k])); lab.style('opacity', 0).transition().delay(q * 350 + DUR).duration(300).style('opacity', 1); }
+          else { ln.attr('x2', d => x(d[k])); dot.attr('cx', d => x(d[k])); }
+        });
         tip(r, d => T(d.marker, [['Age only', '+' + f1(d.age_pct_decade) + '% per decade'], ['Adjusted', '+' + f1(d.age_pct_decade_adj) + '%'], ['BMI effect', '+' + f1(d.bmi_pct_per5) + '% per 5 units'], ['n', d.n]]));
       } else if (i === 1) {
         const F = frame(el, { m: { t: 46, l: 0, b: 16 } });
