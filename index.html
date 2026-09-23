@@ -6,8 +6,8 @@
   color-scheme:light; --rural:#3f8f4f; --urban:#3b3470;
   --bg:#ffffff; --panel:#f6f6f4; --ink:#121212; --text:#3a3a3a; --muted:#666666; --faint:#8c8c8c;
   --rule:#d9d9d9; --grid:#ebebeb; --context:#c9c9c9; --context-2:#e3e3e3;
-  --accent:#d64000; --accent-soft:#fbe3d6; --blue:#0f5499; --men:#2a78d6; --women:#c8366e;
-  --r0:#e8e8e8; --r1:#f2b089; --r2:#d64000; --r3:#7a2400;
+  --accent:#0e7c86; --accent-soft:#d9eeef; --blue:#1d4fb8; --men:#2a78d6; --women:#c8366e;
+  --r0:#e8e8e8; --r1:#9fd3d6; --r2:#1f9aa3; --r3:#0b5960;
   --seq0:#dbe8f6; --seq1:#9ec5f4; --seq2:#3987e5; --seq3:#0f5499; --seq4:#0a2f5c;
   --halo:#ffffff; --tip-bg:#ffffff; --tip-border:#d0d0d0;
   --serif:"Newsreader",Georgia,"Times New Roman",serif;
@@ -112,6 +112,18 @@ svg .halo2{paint-order:stroke;stroke:var(--halo);stroke-width:6px;stroke-linejoi
 .herocap strong{color:var(--ink)}
 .hgo{font:700 15px/1 var(--sans);color:var(--blue);background:none;border:0;padding:0;cursor:pointer}
 @media (max-width:860px){.herogrid{grid-template-columns:1fr;gap:10px}}
+
+.mstack{display:flex;flex-direction:column;gap:34px;margin-top:6px}
+.mcard{position:relative;padding-top:18px}
+.mprog{position:absolute;top:0;left:0;right:0;height:3px;background:var(--rule);border-radius:2px;overflow:hidden}
+.mprog span{display:block;height:100%;background:var(--accent)}
+.mnum{font:700 11.5px/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.mtext p{font:17px/1.6 var(--serif);color:var(--text);margin:0 0 12px}
+.mfig{margin:14px 0 0;padding:14px 12px 10px;background:var(--bg);border:1px solid var(--rule);border-radius:10px}
+.mfig .ctitle{font-size:15.5px;margin:0 0 4px}.mfig .csub{font-size:12.5px;margin:0 0 8px}
+.mfig .chart svg{width:100%;height:auto;max-height:none}
+.msource{margin-top:20px}
+@media (max-width:900px){.hchips{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent);mask-image:linear-gradient(90deg,#000 88%,transparent);padding-bottom:4px}.hchips::-webkit-scrollbar{display:none}.hchip{flex:0 0 auto}}
 </style>
 
 <header class="mast hero"><div class="wrap">
@@ -451,7 +463,7 @@ const RMARG = s => s ? 86 : 112;
   const PEOPLE = (() => { const nd = Math.round(100 * O.diabetes), nu = Math.round(nd * O.undiagnosed / O.diabetes), nc = Math.round(nd * cas[2].share), np = Math.round(100 * O.prediabetes);
     return { nd, nu, nk: nd - nu, nc, np, nn: 100 - nd - np }; })();
   let peopleLast = -1, peoplePos = null;
-  const PCOL = { u: '#c62828', k: '#c62828', c: V('blue'), p: '#e0a800', n: V('context') };
+  const PCOL = { u: '#0b5960', k: '#0b5960', c: V('blue'), p: '#7cc3c8', n: V('context') };
   function people(el, stage) {
     const Pp = PEOPLE, F = frame(el, { tall: true, m: { t: 16, l: 8, r: 8, b: 12 }, h: (W, s) => s ? 520 : Math.min(470, Math.max(400, innerHeight * .6)), aria: '100 people pictogram' });
     const small = F.small, gw = small ? F.iw : F.iw * .5, cell = Math.min(gw / 10, (small ? F.ih * .5 : F.ih) / 10.4);
@@ -502,7 +514,7 @@ const RMARG = s => s ? 86 : 112;
     dek: 'An HbA1c test finds as many undiagnosed cases as diagnosed ones. Among those who know, few are controlled.',
     stats: [],
     steps: [
-      { p: `<p>Picture 100 adults from this cohort. <strong style="color:#c62828">${PEOPLE.nd} of them have diabetes</strong>: an HbA1c blood test of 6.5% or more, or a doctor's diagnosis.</p><p>Another <strong style="color:#b58700">${PEOPLE.np} have prediabetes</strong>, blood sugar already above normal. Fewer than half have normal blood sugar.</p>`, t: `${PEOPLE.nd} in every 100 adults have diabetes`, s: 'Each figure is one adult. Red: diabetes (HbA1c 6.5% or more, or diagnosed); yellow: prediabetes (HbA1c 5.7 to 6.4%); grey: normal (below 5.7%)' },
+      { p: `<p>Picture 100 adults from this cohort. <strong style="color:#0b5960">${PEOPLE.nd} of them have diabetes</strong>: an HbA1c blood test of 6.5% or more, or a doctor's diagnosis.</p><p>Another <strong style="color:#3a9ea5">${PEOPLE.np} have prediabetes</strong>, blood sugar already above normal. Fewer than half have normal blood sugar.</p>`, t: `${PEOPLE.nd} in every 100 adults have diabetes`, s: 'Each figure is one adult. Dark teal: diabetes (HbA1c 6.5% or more, or diagnosed); light teal: prediabetes (HbA1c 5.7 to 6.4%); grey: normal (below 5.7%)' },
       { p: `<p>Now follow only the ${PEOPLE.nd} with diabetes.</p><p><strong>${PEOPLE.nu} of them had never been told.</strong> They found out from this study's blood test. That is half of all diabetes in the cohort, hidden from the people who have it.</p>`, t: `${PEOPLE.nu} of the ${PEOPLE.nd} did not know they had diabetes`, s: 'The people with diabetes, split by whether they had been diagnosed' },
       { p: `<p>Of the ${PEOPLE.nk} who knew, <strong>only ${PEOPLE.nc} have their blood sugar under control</strong> (HbA1c below 7%).</p><p>So of every ${PEOPLE.nd} people with diabetes, ${PEOPLE.nd - PEOPLE.nc} are either unaware or above target.</p>`, t: `Only ${PEOPLE.nc} of ${PEOPLE.nd} are diagnosed and at target`, s: 'The people who knew, split by HbA1c below 7% (blue) or not' },
       { p: `<p>What share of adults have diabetes at each age?</p><p>It climbs steeply through adult life: <strong>${pc0(dmShare(bands[0]))}</strong> of adults aged ${bands[0]} have it, rising to <strong>${pc0(d3.max(bands, b => dmShare(b)))}</strong> by ${bands[d3.maxIndex(bands, b => dmShare(b))]}, then eases slightly after 70.</p>`, t: 'What share of adults have diabetes at each age?', s: 'Share with diabetes (a diagnosis or HbA1c of 6.5% or more), by age band' },
@@ -657,9 +669,10 @@ const RMARG = s => s ? 86 : 112;
           if (!RM) G.style('opacity', 0).transition().delay(1800 + j * 300).duration(400).style('opacity', 1); });
         crosshair(F, x, y, ser);
       } else {
-        const F = frame(el, { m: { t: 40, l: 0 }, h: 360 });
-        note(F, 0, -26, 'Of every 100 anaemic people, how many are also iron deficient?', { size: F.small ? '12.5px' : '14px', cls: 't-ink', w: 700 });
-        hbar(F, D.cause.map(d => { const ci = wilson(Math.round(d.with_iron_deficiency * d.anaemic), d.anaemic); return { k: 'Anaemic ' + d.group.replace('Women', 'women').replace('Men', 'men').replace('< 50', 'under 50').replace('50+', '50 and over').replace('< 60', 'under 60').replace('60+', '60 and over'), sub: `${d.anaemic} people`, v: d.with_iron_deficiency, lo: ci[0], hi: ci[1], c: d.group.startsWith('Women') ? V('women') : V('men') }; }),
+        const F = frame(el, { m: { t: 44, l: 0 }, h: 360 });
+        if (F.small) { note(F, 0, -30, 'Of every 100 anaemic people,', { size: '12.5px', cls: 't-ink', w: 700 }); note(F, 0, -14, 'how many are also iron deficient?', { size: '12.5px', cls: 't-ink', w: 700 }); }
+        else note(F, 0, -26, 'Of every 100 anaemic people, how many are also iron deficient?', { size: '14px', cls: 't-ink', w: 700 });
+        hbar(F, D.cause.map(d => { const ci = wilson(Math.round(d.with_iron_deficiency * d.anaemic), d.anaemic); return { k: (F.small ? '' : 'Anaemic ') + (F.small ? d.group.replace('< 50', 'under 50').replace('50+', '50+').replace('< 60', 'under 60').replace('60+', '60+') : d.group.replace('Women', 'women').replace('Men', 'men').replace('< 50', 'under 50').replace('50+', '50 and over').replace('< 60', 'under 60').replace('60+', '60 and over')), sub: `${d.anaemic} people`, v: d.with_iron_deficiency, lo: ci[0], hi: ci[1], c: d.group.startsWith('Women') ? V('women') : V('men') }; }),
           { domain: [0, 1], fmt: v => pc0(v) + (F.small ? '' : ' iron deficient'), tfmt: pc0, track: true, lw: F.small ? 150 : 200, rpad: F.small ? 44 : 120, ticks: [0, .25, .5, .75, 1], rh: 64, tip: d => T(d.k, [['Iron deficient', pc0(d.v)], ['95% CI', `${pc0(d.lo)} to ${pc0(d.hi)}`], ['', d.sub]]) });
       }
     },
@@ -1024,7 +1037,7 @@ const RMARG = s => s ? 86 : 112;
     r.on('pointerenter', function () { d3.select(this).select('text').style('font-weight', 700); }).on('pointerleave.b', function () { d3.select(this).select('text').style('font-weight', null); });
     tip(r, d => violinSVG(d.name));
     if (!F.small) G.append('text').attr('x', 0).attr('y', -12).style('font-size', '11.5px').style('fill', V('faint')).text('hover a test to see its distribution');
-    const ox = F.small ? 0 : pw + 36, oy = F.small ? ph + 40 : 0, tw = F.iw - ox, th = F.ih - oy;
+    const ox = F.small ? 22 : pw + 36, oy = F.small ? ph + 40 : 0, tw = F.iw - ox, th = F.ih - oy;
     const T2 = F.g.append('g').attr('transform', `translate(${ox},${oy})`);
     const tr = D.traj.filter(d => d.component === 'PC4');
     const ser = ['F', 'M'].map(s => ({ name: SEXN[s], color: SEXC[s], fmt: f2, pts: tr.filter(d => d.sex === s).map(d => ({ x: d.age, y: d.fit, lo: d.lo, hi: d.hi })) }));
@@ -1048,7 +1061,7 @@ const RMARG = s => s ? 86 : 112;
       { p: `<p>Principal component analysis finds the patterns that explain the most variation across all ${D.p} measures at once. How many are real? Parallel analysis compares each pattern with what shuffled data would produce.</p><p><strong>${K}</strong> patterns beat chance (the ${K}th only just); together they carry ${f0(d3.sum(PV.slice(0, K), d => d.pve))}% of the variation. Three stand out: dimension 1 tracks sex, dimension 2 metabolism, and <strong>dimension 4 tracks age</strong>.</p>`, t: `${K} patterns in the blood panel beat chance`, s: 'Variance explained by each component (%), with the 95th percentile from 200 shuffled datasets' },
       { p: `<p>Plot everyone on the first two dimensions, drawn to the same scale so the picture is wider than tall: the first carries twice the variance of the second.</p><p>Men and women separate largely along the first dimension; a single cut on it would misclassify about one person in eight.</p>`, t: 'The first dimension of the blood panel is sex', s: `PC1 (${f0(PV[0].pve)}% of variance) vs PC2 (${f0(PV[1].pve)}%), equal scales` },
       { p: `<p>What the dimensions are made of. The first is an <strong>iron and red-cell axis</strong>: haemoglobin, iron, ferritin and red-cell size load together. The second is <strong>cardiometabolic</strong>: HbA1c, glucose, triglycerides, GGT and CRP rise together.</p>`, t: 'Iron and red cells, then metabolism', s: 'Top eight loadings on PC1 and PC2 (signed)' },
-      { p: `<p>Correlate every dimension with what we know about each person. The first tracks sex and grip strength; the fourth tracks age; the second tracks BMI (ρ = ${f2(ec('PC2', 'BMI').stat)}), diabetes (${f2(ec('PC2', 'Diabetes').stat)}), blood pressure and age.</p>`, t: 'Dimension 1 tracks sex, dimension 2 metabolism, dimension 4 age', s: 'Correlation of each component with participant characteristics; circle size = |ρ|, orange positive, blue negative; grey dots not significant (q ≥ 0.05)' },
+      { p: `<p>Correlate every dimension with what we know about each person. The first tracks sex and grip strength; the fourth tracks age; the second tracks BMI (ρ = ${f2(ec('PC2', 'BMI').stat)}), diabetes (${f2(ec('PC2', 'Diabetes').stat)}), blood pressure and age.</p>`, t: 'Dimension 1 tracks sex, dimension 2 metabolism, dimension 4 age', s: 'Correlation of each component with participant characteristics; circle size = |ρ|, teal positive, blue negative; grey dots not significant (q ≥ 0.05)' },
       { p: `<p>The cardiometabolic dimension is higher in older age groups in both sexes. It peaks in men in their late forties and in women around sixty; the intervals overlap from the fifties on.</p>`, t: 'The cardiometabolic dimension peaks in the late forties in men and around sixty in women', s: 'Mean score on the cardiometabolic dimension (PC2) by age and sex, GAMM with laboratory and site random effects; bands are 95% CIs' },
       { p: `<p>Dimension 4 is the one that tracks <strong>age</strong> most closely (ρ = ${f2(ec('PC4', 'Age').stat)}), and it moves with strength too: grip ρ = ${f2(ec('PC4', 'Grip strength').stat)}, MMSE ${f2(ec('PC4', 'MMSE').stat)}, diabetes ${f2(ec('PC4', 'Diabetes').stat)}.</p><p>It is built from the <strong>white-cell mix</strong>: monocyte, neutrophil and lymphocyte shares load on one side, basophils on the other. In men the score falls until about 60, then levels off; in women it keeps falling to 80, and women sit lower at every age.</p>`, t: 'Dimension 4 falls with age: a white-cell signature', s: 'Left: the analytes that load most on PC4. Right: mean PC4 score by age and sex, GAMM with laboratory and site random effects; bands are 95% CIs' }
     ],
@@ -1303,10 +1316,10 @@ const RMARG = s => s ? 86 : 112;
     steps: [
       { p: `<p>Test every protein for a trend with age, allowing for sex. Each tick below is one protein, placed by the strength and direction of its trend.</p><p><strong>${P.n_age}</strong> clear the 5% false-discovery line: ${P.n_up} rise, led by ${topUp.slice(0, 3).map(d => d.protein).join(', ')}, and ${P.n_down} fall, led by ${topDn.slice(0, 3).map(d => d.protein).join(', ')}.</p>`, t: `${P.n_age} proteins differ with age: ${P.n_up} up, ${P.n_down} down`, s: `Every protein detected in at least half the samples (n = ${P.n_proteins}), placed by its moderated t for age (limma, adjusted for sex); coloured if significant at 5% FDR` },
       { p: `<p>Proteins do not change one at a time. Average each significant protein within the four age strata and group proteins whose curves share a shape.</p><p>Five patterns hold most of them. The largest, <strong>${P.patterns[0].n} proteins, falls steadily</strong> from the twenties onward. Others <strong>rise into midlife</strong> and ease, <strong>rise steadily</strong>, or stay flat and <strong>jump after 60</strong>, echoing the waves of proteome aging reported in thousands of adults by Lehallier and colleagues (2019).</p>`, t: 'Five shapes of change across adult life', s: 'Mean z-score of member proteins in each age stratum; bands span the middle half of members; coloured line: main pathways · number of proteins (degPatterns clustering)' },
-      { p: `<p>Here are the most strongly age-dependent proteins, each as a row of four age strata, grouped by pattern. Blue is below that protein's average, orange above.</p><p>The patterns are visible protein by protein, not only on average.</p>`, t: 'The strongest age-dependent proteins, protein by protein', s: 'Up to seven of the strongest proteins per pattern (age-stratum F-test); each row z-scored across strata' },
+      { p: `<p>Here are the most strongly age-dependent proteins, each as a row of four age strata, grouped by pattern. Blue is below that protein's average, teal above.</p><p>The patterns are visible protein by protein, not only on average.</p>`, t: 'The strongest age-dependent proteins, protein by protein', s: 'Up to seven of the strongest proteins per pattern (age-stratum F-test); each row z-scored across strata' },
       { p: `<p>What do the patterns do? Test each for over-represented biological pathways, against all detected proteins as background.</p><p>Each shape maps to a different programme. Proteins that <strong>fall steadily</strong> are growth-factor receptors and adhesion molecules of tissue maintenance. Those that <strong>rise into midlife</strong> are the complement and clotting cascades. The <strong>steady risers</strong> are neutrophil granule and matrix-degrading enzymes (story 11), and the <strong>late jump</strong> carries chromatin and myeloid proteins.</p>`, t: 'Each trajectory belongs to a distinct biological programme', s: 'Top over-represented pathways per pattern (GO biological process and Reactome); dot size = member proteins in the pathway; darker = stronger enrichment (adjusted p < 0.1)' },
       { p: `<p>A second, threshold-free view ranks all ${P.n_proteins} proteins by their age trend and asks which pathways sit at the top or bottom of the ranking.</p><p>${gsU.length ? `<strong>${cut(nice(gsU[0].pathway), 60)}</strong> leads the pathways rising with age` : ''}${gsD.length ? `; <strong>${cut(nice(gsD[0].pathway), 60)}</strong> leads those falling` : ''}.</p>`, t: 'Pathways rising and falling with age across the whole proteome', s: 'Gene-set enrichment on the ranked age trend (fgsea; Reactome, GO biological process, Hallmark); normalised enrichment score, adjusted p < 0.05' },
-      { p: `<p>Finally, wire the age-related proteins together using STRING, an independent database of known protein interactions. ${P.net.nodes.length} of them form one connected network.</p><p>Its neighbourhoods are coherent: proteins that rise with age cluster with each other, as do those that fall, around recognisable hubs.</p>`, t: `${P.net.nodes.length} age-related proteins form one connected interaction network`, s: 'STRING v12 interactions (combined score ≥ 700) among proteins significant for age; orange = higher in older adults, blue = lower; size = connections; labels = hubs' }
+      { p: `<p>Finally, wire the age-related proteins together using STRING, an independent database of known protein interactions. ${P.net.nodes.length} of them form one connected network.</p><p>Its neighbourhoods are coherent: proteins that rise with age cluster with each other, as do those that fall, around recognisable hubs.</p>`, t: `${P.net.nodes.length} age-related proteins form one connected interaction network`, s: 'STRING v12 interactions (combined score ≥ 700) among proteins significant for age; teal = higher in older adults, blue = lower; size = connections; labels = hubs' }
     ],
     src: 'Source: BHARAT pilot proteome, n = 80 (18 to 80 years, four age strata of about 20), perchloric-acid-depleted plasma, timsTOF Pro 2 diaPASEF, DIA-NN 2.5.',
     draw(el, i) {
@@ -1844,7 +1857,8 @@ const ORDER=['diabetes','iron','hunger','urbanrural','hba1c','phenoage','panel',
 /* ---------- app shell: tabs, lazy build, scrollytelling ---------- */
 (function () {
   const tabrow = document.getElementById('tabrow'), main = document.getElementById('main');
-  const state = S.map(() => ({ built: false, step: 0, sec: null, io: null }));
+  const MQ = matchMedia('(max-width: 900px)');
+  let state = S.map(() => ({ built: false, step: 0, sec: null, io: null }));
   let active = -1;
   const tabs = () => [...tabrow.querySelectorAll('button.tab')];
   let lastPart = null;
@@ -1856,7 +1870,27 @@ const ORDER=['diabetes','iron','hunger','urbanrural','hba1c','phenoage','panel',
     b.onclick = () => show(k, true);
     tabrow.appendChild(b);
   });
+  function buildMobile(k) {
+    const s = S[k], st = state[k], n = s.steps.length;
+    const sec = document.createElement('section'); sec.className = 'story mstory'; sec.id = 'story-' + s.id; sec.setAttribute('role', 'tabpanel');
+    sec.innerHTML = `<header class="shead"><div class="kicker">Story ${k + 1} of ${S.length}</div><h2>${s.h}</h2><p class="dek">${s.dek}</p></header>
+      <div class="mstack">${s.steps.map((p, j) => `<article class="mcard" data-i="${j}"><div class="mprog" aria-hidden="true"><span style="width:${100 * (j + 1) / n}%"></span></div>
+        <div class="mnum">${j + 1} of ${n}</div><div class="mtext">${p.p}</div>
+        <figure class="mfig"><p class="ctitle">${p.t}</p><p class="csub">${p.s}</p><div class="chart"></div></figure></article>`).join('')}</div>
+      <p class="source msource">${s.src}</p>
+      <div class="after">${s.after.map(x => `<div><h4>${x[0]}</h4><p>${x[1]}</p></div>`).join('')}</div>
+      ${k < S.length - 1 ? `<p class="next"><button class="nextbtn">Next: ${S[k + 1].tab} →</button></p>` : ''}`;
+    main.appendChild(sec); st.sec = sec; st.built = true; st.mobile = true; st.drawnCards = new Set();
+    const nb = sec.querySelector('.nextbtn'); if (nb) nb.onclick = () => show(k + 1, true);
+    const drawCard = card => { const j = +card.dataset.i, el = card.querySelector('.chart');
+      try { s.draw(el, j); const sv = el.querySelector('svg'); if (sv) sv.setAttribute('aria-label', s.steps[j].t + '. ' + s.steps[j].s); } catch (e) { console.error(s.id, j, e); }
+      st.drawnCards.add(card); };
+    st.drawCard = drawCard;
+    st.io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting && !st.drawnCards.has(e.target) && !sec.hidden) drawCard(e.target); }), { rootMargin: '0px 0px -25% 0px' });
+    sec.querySelectorAll('.mcard').forEach(c => st.io.observe(c));
+  }
   function build(k) {
+    if (MQ.matches) return buildMobile(k);
     const s = S[k], st = state[k];
     const sec = document.createElement('section'); sec.className = 'story'; sec.id = 'story-' + s.id; sec.setAttribute('role', 'tabpanel');
     sec.innerHTML = `<header class="shead"><div class="kicker">Story ${k + 1} of ${S.length}</div><h2>${s.h}</h2><p class="dek">${s.dek}</p>
@@ -1871,6 +1905,7 @@ const ORDER=['diabetes','iron','hunger','urbanrural','hba1c','phenoage','panel',
     sec.querySelectorAll('.step').forEach(el => st.io.observe(el));
   }
   function render(k) {
+    if (state[k].mobile) return;
     const s = S[k], st = state[k], sec = st.sec, p = s.steps[st.step];
     sec.querySelectorAll('.step').forEach(el => el.classList.toggle('is-active', +el.dataset.i === st.step));
     const t = sec.querySelector('.ctitle'), sb = sec.querySelector('.csub');
@@ -1891,7 +1926,10 @@ const ORDER=['diabetes','iron','hunger','urbanrural','hba1c','phenoage','panel',
   }
   window.__show = show;
   tabrow.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const n = (active + (e.key === 'ArrowRight' ? 1 : S.length - 1)) % S.length; show(n, false); tabs()[n].focus(); } });
-  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => active >= 0 && render(active), 180); });
+  let rt, lastW = innerWidth; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (active < 0) return; const st = state[active];
+    if (st.mobile) { if (Math.abs(innerWidth - lastW) > 30) { lastW = innerWidth; st.drawnCards.forEach(c => st.drawCard(c)); } } else render(active); }, 180); });
+  MQ.addEventListener('change', () => { const k = active; state.forEach(st => { if (st.io) st.io.disconnect(); if (st.sec) st.sec.remove(); });
+    state = S.map(() => ({ built: false, step: 0, sec: null, io: null })); active = -1; if (k >= 0) show(k, false); });
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => active >= 0 && render(active));
   new MutationObserver(() => active >= 0 && render(active)).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   const h = location.hash.slice(1), k0 = Math.max(0, S.findIndex(s => s.id === h));
@@ -2049,7 +2087,7 @@ function place(name) {
     const NET = (typeof DATA !== 'undefined' && DATA.d12 && DATA.d12.net) || { nodes: [], edges: [], comm: [] };
     if (!NETPOS) { // force layout: each community pulled to its own spot on a ring, so neighbourhoods read apart
       const comms = NET.comm.slice().sort((a, b) => b.n - a.n).map(c => c.comm), cc = {};
-      comms.forEach((c, i) => { const a = -Math.PI / 2 + i * 2 * Math.PI / comms.length, rr = i === 0 ? 0 : .34; cc[c] = [Math.cos(a) * rr, Math.sin(a) * rr]; });
+      comms.forEach((c, i) => { const a = -Math.PI / 2 + i * 2 * Math.PI / comms.length, rr = .36; cc[c] = [Math.cos(a) * rr, Math.sin(a) * rr]; });
       const nodes = NET.nodes.map(n => ({ id: n.protein, comm: n.comm, x: (cc[n.comm] || [0, 0])[0] + (rnd() - .5) * .05, y: (cc[n.comm] || [0, 0])[1] + (rnd() - .5) * .05 }));
       const ids = new Set(nodes.map(n => n.id)), links = NET.edges.filter(e => ids.has(e.from) && ids.has(e.to)).map(e => ({ source: e.from, target: e.to }));
       const sim = d3.forceSimulation(nodes).force('link', d3.forceLink(links).id(d => d.id).distance(.03).strength(l => l.source.comm === l.target.comm ? .25 : .01))
@@ -2071,7 +2109,9 @@ function place(name) {
     const placed = [];
     big.forEach(cm => { const mem = NET.nodes.filter(n => n.comm === cm.comm); const cx = mem.reduce((a, n) => a + pos[n.protein][0], 0) / mem.length, cy = Math.min(...mem.map(n => pos[n.protein][1]));
       let t = NICK[cm.top] || cm.top; if (t.length > 26) t = t.slice(0, 25) + '…';
-      const x = Math.max(70, Math.min(W - 70, cx)), y = Math.max(12, cy - 10), w = t.length * 6.4;
+      const my = mem.reduce((a, n) => a + pos[n.protein][1], 0) / mem.length, dx = cx - W / 2, dy = my - H / 2, dd = Math.hypot(dx, dy) || 1;
+      const rad = Math.max(...mem.map(n => Math.hypot(pos[n.protein][0] - cx, pos[n.protein][1] - my))) * .8 + 14;
+      const x = Math.max(66, Math.min(W - 66, cx + dx / dd * rad)), y = Math.max(12, Math.min(H - 6, my + dy / dd * rad + 4)), w = t.length * 6.4;
       if (placed.some(b => Math.abs(b[0] - x) < (w + b[2]) / 2 && Math.abs(b[1] - y) < 16)) return; placed.push([x, y, w]);
       labels.push({ x, y, t, c: C.ink, a: 'center', w: 600, sz: 12 }); });
     R = pr;
@@ -2152,7 +2192,7 @@ function frame(now) {
     ctx.globalAlpha = ta; ctx.fillStyle = tc; ctx.beginPath(); ctx.arc(x, y, Math.max(.4, tr), 0, 6.2832); ctx.fill();
   }
   ctx.globalAlpha = la0;
-  labels.forEach(l => { ctx.font = `${l.w || 600} ${l.sz || (l.w === 700 ? 15 : 13)}px ${cssv('sans')}`; ctx.fillStyle = l.c; ctx.textAlign = l.a; ctx.fillText(l.t, l.x, l.y); });
+  labels.forEach(l => { ctx.font = `${l.w || 600} ${l.sz || (l.w === 700 ? 15 : 13)}px ${cssv('sans')}`; ctx.textAlign = l.a; ctx.lineJoin = 'round'; ctx.strokeStyle = 'rgba(255,255,255,.92)'; ctx.lineWidth = 4; ctx.strokeText(l.t, l.x, l.y); ctx.fillStyle = l.c; ctx.fillText(l.t, l.x, l.y); });
   ctx.globalAlpha = 1;
   if (running) requestAnimationFrame(frame);
 }
