@@ -168,7 +168,12 @@ const fp = p => p < 0.001 ? (p < 1e-4 ? 'p < 0.0001' : 'p < 0.001') : 'p = ' + (
 const fq = q => q < 0.001 ? 'q < 0.001' : 'q = ' + (q < 0.01 ? d3.format('.3f')(q) : d3.format('.2f')(q));
 const esc = s => String(s).replace(/[&<>]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 const setVH = () => document.documentElement.style.setProperty('--vh', (window.innerHeight * 0.01) + 'px');
-setVH(); addEventListener('orientationchange', () => setTimeout(setVH, 300));
+// stable viewport height for chart sizing: phones change innerHeight whenever the address bar slides in or out,
+// which used to resize charts mid-scroll and shove the page around. Only a real width change counts.
+let VH0 = innerHeight, VW0 = innerWidth;
+const syncVH = () => { VW0 = innerWidth; VH0 = innerHeight; setVH(); };
+setVH(); addEventListener('orientationchange', () => setTimeout(syncVH, 300));
+addEventListener('resize', () => { if (Math.abs(innerWidth - VW0) > 30) syncVH(); });
 
 /* ---------- frame ---------- */
 function frame(el, o = {}) {
@@ -177,7 +182,7 @@ function frame(el, o = {}) {
   const small = W < 560;
   const m = Object.assign({ t: 26, r: small ? 12 : 22, b: 48, l: 44 }, o.m || {});
   if (typeof m.r === 'function') m.r = m.r(small);
-  let H = o.h ? (typeof o.h === 'function' ? o.h(W, small) : o.h) : Math.round(Math.min(small ? 360 : 480, Math.max(290, innerHeight * (small ? .46 : .6))));
+  let H = o.h ? (typeof o.h === 'function' ? o.h(W, small) : o.h) : Math.round(Math.min(small ? 360 : 480, Math.max(290, VH0 * (small ? .46 : .6))));
   const svg = d3.select(el).append('svg').attr('viewBox', `0 0 ${W} ${H}`).attr('role', 'img').attr('aria-label', o.aria || '');
   const g = svg.append('g').attr('transform', `translate(${m.l},${m.t})`);
   const F = { svg, g, W, H, iw: W - m.l - m.r, ih: H - m.t - m.b, m, small, boxes: [] };
@@ -190,7 +195,7 @@ function eqFrame(el, xs, ys, o = {}) {
   const m = Object.assign({ t: 30, r: 14, b: 48, l: 44 }, o.m || {});
   const xr = d3.extent(xs), yr = d3.extent(ys), pad = .06;
   const dx = (xr[1] - xr[0]) * (1 + 2 * pad), dy = (yr[1] - yr[0]) * (1 + 2 * pad);
-  const iw = W - m.l - m.r; let ih = iw * dy / dx; const maxH = Math.min(small ? 420 : 560, innerHeight * .62);
+  const iw = W - m.l - m.r; let ih = iw * dy / dx; const maxH = Math.min(small ? 420 : 560, VH0 * .62);
   let iw2 = iw; if (ih > maxH) { ih = maxH; iw2 = ih * dx / dy; }
   const F = frame(el, { h: Math.round(ih + m.t + m.b), m: Object.assign({}, m, { r: m.r + (iw - iw2) }), aria: o.aria });
   const cx = (xr[0] + xr[1]) / 2, cy = (yr[0] + yr[1]) / 2;
@@ -472,7 +477,7 @@ const RMARG = s => s ? 86 : 112;
   let peopleLast = -1, peoplePos = null;
   const PCOL = { u: '#0b5960', k: '#0b5960', c: V('blue'), p: '#7cc3c8', n: V('context') };
   function people(el, stage) {
-    const Pp = PEOPLE, F = frame(el, { tall: true, m: { t: 16, l: 8, r: 8, b: 12 }, h: (W, s) => s ? 520 : Math.min(470, Math.max(400, innerHeight * .6)), aria: '100 people pictogram' });
+    const Pp = PEOPLE, F = frame(el, { tall: true, m: { t: 16, l: 8, r: 8, b: 12 }, h: (W, s) => s ? 520 : Math.min(470, Math.max(400, VH0 * .6)), aria: '100 people pictogram' });
     const small = F.small, gw = small ? F.iw : F.iw * .5, cell = Math.min(gw / 10, (small ? F.ih * .5 : F.ih) / 10.4);
     const ppl = d3.range(100).map(k => ({ k, g: k < Pp.nu ? 'u' : k < Pp.nu + Pp.nc ? 'c' : k < Pp.nd ? 'k' : k < Pp.nd + Pp.np ? 'p' : 'n' }));
     const gridXY = k => [(k % 10) * cell + cell / 2, Math.floor(k / 10) * cell + cell / 2];
@@ -767,7 +772,7 @@ const RMARG = s => s ? 86 : 112;
   const ukF = k => U.kdist.find(d => d.sex === 'F' && d.k === k), ukM = k => U.kdist.find(d => d.sex === 'M' && d.k === k);
   const USH = ['Anaemia', 'Iron deficiency', 'Low B12', 'Low vitamin D', 'High homocysteine'];
   function upset(el) {
-    const F = frame(el, { tall: true, m: { t: 30, l: 0, r: 8, b: 10 }, h: (W, s) => s ? 470 : Math.min(500, Math.max(420, innerHeight * .62)), aria: 'UpSet chart of co-occurring deficits' });
+    const F = frame(el, { tall: true, m: { t: 30, l: 0, r: 8, b: 10 }, h: (W, s) => s ? 470 : Math.min(500, Math.max(420, VH0 * .62)), aria: 'UpSet chart of co-occurring deficits' });
     const top = U.intersections.slice().sort((a, b) => b.total - a.total).slice(0, F.small ? 10 : 13), rest = U.intersections.filter(d => !top.includes(d));
     const cols = top, otherN = d3.sum(rest, d => d.total);
     const lw = F.small ? 134 : 150, mh = 5 * (F.small ? 20 : 22), bh = F.ih - mh - 28;
@@ -812,7 +817,7 @@ const RMARG = s => s ? 86 : 112;
       if (i === 1) return upset(el);
       if (i > 1) i -= 1;
       if (i === 0) {
-        const F = frame(el, { m: { t: 70, b: 26 }, h: (W, s) => s ? 600 : Math.min(480, innerHeight * .62) });
+        const F = frame(el, { m: { t: 70, b: 26 }, h: (W, s) => s ? 600 : Math.min(480, VH0 * .62) });
         const ms = [['b12_def', 'B12 below 200 pg/mL'], ['hcy_high', 'Homocysteine above 15 µmol/L'], ['vitd_def', 'Vitamin D below 20 ng/mL']];
         const bands = [...new Set(D.prev.map(d => d.band))];
         const pw = F.small ? F.iw - 60 : (F.iw - 80) / 3 - 10, ph = F.small ? (F.ih - 156) / 3 : F.ih;
@@ -898,7 +903,7 @@ const RMARG = s => s ? 86 : 112;
   }
 
   function accelStrip(el) {
-    const F = frame(el, { m: { t: 30, r: 14, l: 0, b: 48 }, h: (W, s) => s ? 400 : Math.min(460, Math.max(380, innerHeight * .58)), aria: 'PhenoAge minus age, anaemic vs not anaemic' });
+    const F = frame(el, { m: { t: 30, r: 14, l: 0, b: 48 }, h: (W, s) => s ? 400 : Math.min(460, Math.max(380, VH0 * .58)), aria: 'PhenoAge minus age, anaemic vs not anaemic' });
     const lw = F.small ? 84 : 118, x = d3.scaleLinear([-25, 30], [lw, F.iw]).clamp(true);
     const G = [{ k: 0, n: 'Not anaemic', c: V('context'), tc: V('muted'), d: na }, { k: 1, n: 'Anaemic', c: V('accent'), tc: V('accent'), d: an }];
     const rh = (F.ih - 10) / 2;
@@ -945,7 +950,7 @@ const RMARG = s => s ? 86 : 112;
       if (i === 0) scatter(el, false);
       else if (i === 1) accelStrip(el);
       else if (i === 2) {
-        const F = frame(el, { m: { t: 30, l: 0, r: 12 }, h: (W, s) => s ? 470 : Math.min(480, innerHeight * .64) });
+        const F = frame(el, { m: { t: 30, l: 0, r: 12 }, h: (W, s) => s ? 470 : Math.min(480, VH0 * .64) });
         an.c_total = an.accel; na.c_total = na.accel;
         const lw = F.small ? 132 : 206, rows = [['c_total', 'Net acceleration']].concat(BM.slice().sort((a, b) => Math.abs(an[b[0]]) - Math.abs(an[a[0]])));
         const y = d3.scaleBand(rows.map(r => r[1]), [0, F.ih - 24]).padding(.22), x = d3.scaleLinear([-4, 8.5], [lw, F.iw - 34]);
@@ -1030,7 +1035,7 @@ const RMARG = s => s ? 86 : 112;
     return `<b>${Q.name}</b> <span class="m">${Q.unit}, by age and sex; dot = median, bar = middle half</span>` + o;
   }
   function pc4(el) {
-    const F = frame(el, { tall: true, m: { t: 30, l: 0, r: s => s ? 58 : 76, b: 44 }, h: (W, s) => s ? 560 : Math.min(460, Math.max(360, innerHeight * .56)) });
+    const F = frame(el, { tall: true, m: { t: 30, l: 0, r: s => s ? 58 : 76, b: 44 }, h: (W, s) => s ? 560 : Math.min(460, Math.max(360, VH0 * .56)) });
     const L = D.loadings.filter(d => d.component === 'PC4').sort((a, b) => b.loading - a.loading);
     const lw = 92, pw = F.small ? F.iw : F.iw * .36, ph = F.small ? 190 : F.ih;
     const yb = d3.scaleBand(L.map(d => d.name), [0, ph - 20]).padding(.28), xb = d3.scaleLinear([-.45, .45], [lw, pw - 8]);
@@ -1355,7 +1360,7 @@ const RMARG = s => s ? 86 : 112;
         note(F, x(0) + 8, 4, `${P.n_up} up`, { size: '13px', c: V('accent'), w: 700 });
       } else if (i === 1) {
         const n = pats.length, cols = F0 => F0.small ? 2 : 3;
-        const F = frame(el, { tall: true, m: { t: 16, l: 8, r: 8, b: 20 }, h: (W, s) => s ? 560 : Math.min(470, Math.max(400, innerHeight * .6)) });
+        const F = frame(el, { tall: true, m: { t: 16, l: 8, r: 8, b: 20 }, h: (W, s) => s ? 560 : Math.min(470, Math.max(400, VH0 * .6)) });
         const C = cols(F), R = Math.ceil(n / C), pw = F.iw / C, ph = F.ih / R, ix = 30, iw = pw - ix - 14, ih = ph - 66;
         const y = d3.scaleLinear([-1.8, 1.8], [ih, 0]), x = d3.scalePoint(STR, [0, iw]).padding(.15);
         pats.forEach((k, j) => {
@@ -1415,7 +1420,7 @@ const RMARG = s => s ? 86 : 112;
         tip(g, d => T(nice(d.d.pathway), [['NES', f2(d.est)], ['Adjusted p', d3.format('.2g')(d.d.padj)], ['Proteins', d.d.size], ['Leading edge', d.d.leadingEdge]]));
       } else {
         const N = P.net.nodes, E = P.net.edges, byId = new Map(N.map(d => [d.protein, d]));
-        const F = frame(el, { m: { t: 10, l: 6, r: 6, b: 10 }, h: (W, s) => s ? 420 : Math.min(540, Math.max(420, innerHeight * .64)) });
+        const F = frame(el, { m: { t: 10, l: 6, r: 6, b: 10 }, h: (W, s) => s ? 420 : Math.min(540, Math.max(420, VH0 * .64)) });
         if (!N[0].fx) { const comms = [...new Set(N.map(n => n.comm))].map(c => [c, N.filter(n => n.comm === c).length]).sort((a, b) => b[1] - a[1]).map(c => c[0]), cc = {};
           comms.forEach((c, i) => { const a = -Math.PI / 2 + i * 2 * Math.PI / comms.length; cc[c] = [Math.cos(a) * .36, Math.sin(a) * .36]; });
           const nodes = N.map((n, i) => ({ i, comm: n.comm, x: cc[n.comm][0] + (Math.sin(i * 12.9898) * .03), y: cc[n.comm][1] + (Math.cos(i * 78.233) * .03) }));
@@ -1614,7 +1619,7 @@ const RMARG = s => s ? 86 : 112;
         place(F, st.map(d => ({ x: x(mid[d.stratum]) + 16, y: y(d.mean), text: d.stratum, size: '12px', w: 700, c: V('accent'), priority: 2, cands: [[2, 0, 'start'], [-34, -14, 'end'], [2, -14, 'start']] })));
         note(F, F.iw, F.ih - 12, `ρ = ${f2(sec.rho_adj)} (sex-adjusted), n = 80`, { a: 'end', size: '13px', cls: 't-ink', w: 700 });
       } else if (i === 4) {
-        const F = frame(el, { m: { t: 30, l: 8, r: 14, b: 44 }, tall: true, h: (W, s) => s ? 560 : Math.min(460, Math.max(360, innerHeight * .58)) });
+        const F = frame(el, { m: { t: 30, l: 8, r: 14, b: 44 }, tall: true, h: (W, s) => s ? 560 : Math.min(460, Math.max(360, VH0 * .58)) });
         const lw = F.small ? F.iw : F.iw * .5, lh = F.small ? F.ih * .52 : F.ih;
         const G = F.g.append('g');
         const xg = d3.scaleBand(['No diabetes', 'Diabetes'], [44, lw - 10]).padding(.35), y = d3.scaleLinear().domain(d3.extent(P, d => d.histone)).nice().range([lh - 10, 0]);
@@ -1791,7 +1796,7 @@ const RMARG = s => s ? 86 : 112;
   const TN = ['Lower', 'Middle', 'Upper', 'Upper'];
   const WO = [['Hypertension', 'High blood pressure'], ['Diabetes', 'Diabetes'], ['Low B12', 'Low B12'], ['Low vitamin D', 'Low vitamin D']];
   function wealth(el) {
-    const F = frame(el, { tall: true, m: { t: 34, l: 0, r: 6, b: 8 }, h: (W, s) => s ? 520 : Math.min(400, Math.max(340, innerHeight * .52)), aria: 'Prevalence by social class in villages and cities' });
+    const F = frame(el, { tall: true, m: { t: 34, l: 0, r: 6, b: 8 }, h: (W, s) => s ? 520 : Math.min(400, Math.max(340, VH0 * .52)), aria: 'Prevalence by social class in villages and cities' });
     const cols = F.small ? 2 : 4, rows = Math.ceil(WO.length / cols), gx = F.small ? 16 : 22, gy = F.small ? 74 : 58;
     const pw = (F.iw - gx * (cols - 1)) / cols, ph = (F.ih - gy * rows) / rows;
     const y = d3.scaleLinear([0, .6], [ph, 0]);
@@ -1907,15 +1912,18 @@ const ORDER=['diabetes','iron','hunger','urbanrural','hba1c','phenoage','panel',
     main.appendChild(sec); st.sec = sec; st.built = true; st.mobile = true; st.drawnCards = new Set();
     const nb = sec.querySelector('.nextbtn'); if (nb) nb.onclick = () => show(k + 1, true);
     const drawCard = card => { const j = +card.dataset.i, el = card.querySelector('.chart');
+      if (el.offsetHeight) el.style.minHeight = el.offsetHeight + 'px'; // hold the space while redrawing
       try { s.draw(el, j); const sv = el.querySelector('svg'); if (sv) sv.setAttribute('aria-label', s.steps[j].t + '. ' + s.steps[j].s); } catch (e) { console.error(s.id, j, e); }
-      el.style.minHeight = ''; st.drawnCards.add(card); };
+      requestAnimationFrame(() => { el.style.minHeight = ''; }); st.drawnCards.add(card); };
     st.drawCard = drawCard;
     // watch the chart itself: draw (and so animate) when at least 40% of it is on screen; replay after it has fully left
     const away = new Set();
     st.io = new IntersectionObserver(es => es.forEach(e => { const card = e.target.closest('.mcard'); if (sec.hidden) return;
       if (e.isIntersecting && e.intersectionRatio >= .4 && (!st.drawnCards.has(card) || away.has(card))) { away.delete(card); drawCard(card); }
       else if (!e.isIntersecting && st.drawnCards.has(card)) away.add(card); }), { threshold: [0, .4] });
-    sec.querySelectorAll('.mfig').forEach(f => { f.querySelector('.chart').style.minHeight = '240px'; st.io.observe(f); });
+    // lay every chart out once up front so its final height is known; the observer then replays it with animation
+    sec.querySelectorAll('.mcard').forEach(c => { try { s.draw(c.querySelector('.chart'), +c.dataset.i); } catch (e) { console.error(s.id, c.dataset.i, e); } });
+    sec.querySelectorAll('.mfig').forEach(f => st.io.observe(f));
   }
   function build(k) {
     if (MQ.matches) return buildMobile(k);
@@ -1954,8 +1962,8 @@ const ORDER=['diabetes','iron','hunger','urbanrural','hba1c','phenoage','panel',
   }
   window.__show = show;
   tabrow.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const n = (active + (e.key === 'ArrowRight' ? 1 : S.length - 1)) % S.length; show(n, false); tabs()[n].focus(); } });
-  let rt, lastW = innerWidth; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (active < 0) return; const st = state[active];
-    if (st.mobile) { if (Math.abs(innerWidth - lastW) > 30) { lastW = innerWidth; st.drawnCards.forEach(c => st.drawCard(c)); } } else render(active); }, 180); });
+  let rt, lastW = innerWidth, dW = innerWidth; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (active < 0) return; const st = state[active];
+    if (st.mobile) { if (Math.abs(innerWidth - lastW) > 30) { lastW = innerWidth; st.drawnCards.forEach(c => st.drawCard(c)); } } else if (Math.abs(innerWidth - dW) > 2) { dW = innerWidth; render(active); } }, 180); });
   MQ.addEventListener('change', () => { const k = active; state.forEach(st => { if (st.io) st.io.disconnect(); if (st.sec) st.sec.remove(); });
     state = S.map(() => ({ built: false, step: 0, sec: null, io: null })); active = -1; if (k >= 0) show(k, false); });
   matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => active >= 0 && render(active));
@@ -2236,7 +2244,7 @@ cv.addEventListener('pointerleave', () => { mx = my = -1e4; });
     const s = typeof S !== 'undefined' ? S.find(x => x.id === id) : null; b.textContent = id === 'body' ? 'The cohort' : (s ? s.tab : id); b.onclick = () => setState(id, true); box.appendChild(b); }); }
 // pause drawing when the hero is off screen
 new IntersectionObserver(es => es.forEach(en => { const was = running; running = en.isIntersecting; if (running && !was) requestAnimationFrame(frame); })).observe(cv);
-resize(); addEventListener('resize', () => { clearTimeout(resize.t); resize.t = setTimeout(resize, 150); });
+let hW = innerWidth; resize(); addEventListener('resize', () => { if (Math.abs(innerWidth - hW) < 2) return; hW = innerWidth; clearTimeout(resize.t); resize.t = setTimeout(resize, 150); });
 P.forEach(p => { p.sx = p.tx + (rnd() - .5) * 40; p.sy = H + 20; p.fromA = 1; p.fromR = RB; p.delay = RMH ? 0 : (1 - p.by) * 700 + rnd() * 300; });
 t0 = performance.now(); document.getElementById('herocap').innerHTML = STATES.body.cap;
 requestAnimationFrame(frame);
